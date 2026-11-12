@@ -111,6 +111,9 @@ fun LearnCosmosScreen(
                         onOpenUrl = { viewModel.openSourceArticle(context, topic.sourceUrl) }
                     )
                 }
+                item {
+                    com.limitcrosses.app.ui.components.PankajYadavFooter(detailed = true)
+                }
             }
         }
     }

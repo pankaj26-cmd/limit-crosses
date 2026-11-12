@@ -105,5 +105,12 @@ class AdminViewModel(
             }
         }
     }
+
+    fun logout(onDone: () -> Unit) {
+        viewModelScope.launch {
+            authRepository.logout()
+            onDone()
+        }
+    }
 }
 

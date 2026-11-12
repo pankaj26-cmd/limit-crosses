@@ -2,22 +2,20 @@ package com.limitcrosses.app.ui.screens
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.net.VpnService
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.QueryStats
-import androidx.compose.material.icons.filled.VpnLock
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +30,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.limitcrosses.app.R
 import com.limitcrosses.app.platform.vpn.LimitCrossesVpnService
+import com.limitcrosses.app.ui.components.PankajYadavFooter
 import com.limitcrosses.app.ui.theme.*
 import com.limitcrosses.app.ui.viewmodel.PermissionsViewModel
 
@@ -44,6 +43,8 @@ fun PermissionsChecklistScreen(
     val context = LocalContext.current
     val permState by viewModel.permState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    var showGuideDialog by remember { mutableStateOf(false) }
 
     // Refresh permissions whenever returning to this screen from system settings
     DisposableEffect(lifecycleOwner) {
@@ -66,7 +67,6 @@ fun PermissionsChecklistScreen(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
         viewModel.checkPermissions()
-        // If approved, start VPN service
         if (LimitCrossesVpnService.isPrepared(context)) {
             val intent = Intent(context, LimitCrossesVpnService::class.java)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -81,7 +81,7 @@ fun PermissionsChecklistScreen(
         containerColor = CosmicBackground,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.perm_title), color = CosmicTextPrimary) },
+                title = { Text(stringResource(R.string.perm_title), color = CosmicTextPrimary, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = CosmicBackground)
             )
         }
@@ -99,7 +99,69 @@ fun PermissionsChecklistScreen(
                 color = CosmicTextSecondary
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // RESTRICTED SETTINGS UNLOCKER CARD (Android 13+ / MIUI / ColorOS / OneUI)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = CosmicSurface,
+                border = BorderStroke(1.dp, CosmicWarning.copy(alpha = 0.5f))
+            ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.HelpOutline, contentDescription = null, tint = CosmicWarning, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.perm_restricted_settings_title),
+                            fontWeight = FontWeight.Bold,
+                            color = CosmicTextPrimary,
+                            fontSize = 14.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = stringResource(R.string.perm_restricted_settings_desc),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CosmicTextSecondary,
+                        lineHeight = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                openAppDetailsSettings(context)
+                                showGuideDialog = true
+                            },
+                            modifier = Modifier.weight(1f).height(40.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = CosmicWarning.copy(alpha = 0.85f))
+                        ) {
+                            Text(
+                                text = stringResource(R.string.perm_restricted_settings_btn),
+                                color = CosmicBackground,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
+
+                        OutlinedButton(
+                            onClick = { showGuideDialog = true },
+                            modifier = Modifier.height(40.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, CosmicCardBorder),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CosmicTextSecondary)
+                        ) {
+                            Text("Guide", fontSize = 12.sp)
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // 1. Usage Stats Permission (MANDATORY)
             PermissionCard(
@@ -109,14 +171,11 @@ fun PermissionsChecklistScreen(
                 isGranted = permState.hasUsageStats,
                 buttonText = stringResource(R.string.perm_usage_btn),
                 onAction = {
-                    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }
-                    context.startActivity(intent)
+                    openUsageSettings(context)
                 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // 2. Notification Permission (Android 13+)
             PermissionCard(
@@ -134,7 +193,7 @@ fun PermissionsChecklistScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // 3. VPN Local Inspection (Optional / Best Effort)
             PermissionCard(
@@ -159,7 +218,7 @@ fun PermissionsChecklistScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = onContinue,
@@ -178,6 +237,26 @@ fun PermissionsChecklistScreen(
                 )
             }
 
+            // Fallback for Local Demo/Testing Mode so developer/tester is never trapped
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedButton(
+                onClick = onContinue,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp),
+                shape = RoundedCornerShape(14.dp),
+                border = BorderStroke(1.dp, CosmicCardBorder),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = CosmicTextSecondary)
+            ) {
+                Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = stringResource(R.string.perm_bypass_demo_btn),
+                    fontSize = 13.sp,
+                    color = CosmicTextSecondary
+                )
+            }
+
             if (!viewModel.canProceedToLimit()) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
@@ -186,7 +265,66 @@ fun PermissionsChecklistScreen(
                     style = MaterialTheme.typography.labelSmall
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            PankajYadavFooter()
         }
+    }
+
+    if (showGuideDialog) {
+        AlertDialog(
+            onDismissRequest = { showGuideDialog = false },
+            title = {
+                Text(
+                    text = "Restricted Settings Unlock Guide",
+                    fontWeight = FontWeight.Bold,
+                    color = CosmicTextPrimary
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "Because this APK is installed directly, Android 13+ prevents sensitive permissions until unlocked:",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CosmicTextSecondary
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = CosmicSurface,
+                        border = BorderStroke(1.dp, CosmicCardBorder)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(text = "1. Tap 'Open App Info' below.", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CosmicTextPrimary)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(text = "2. Tap the 3 dots (⋮) in the top-right corner.", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CosmicTextPrimary)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(text = "3. Select 'Allow restricted settings' & enter device PIN.", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CosmicTextPrimary)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(text = "4. Return to Limit Crosses & tap 'Open Usage Settings'.", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CosmicSuccess)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showGuideDialog = false
+                        openAppDetailsSettings(context)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CosmicSecondary)
+                ) {
+                    Text("Open App Info", color = CosmicBackground, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showGuideDialog = false }) {
+                    Text("Close", color = CosmicTextSecondary)
+                }
+            },
+            containerColor = CosmicCard,
+            shape = RoundedCornerShape(16.dp)
+        )
     }
 }
 
@@ -201,9 +339,9 @@ private fun PermissionCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(16.dp),
         color = CosmicCard,
-        border = androidx.compose.foundation.BorderStroke(
+        border = BorderStroke(
             1.dp,
             if (isGranted) CosmicSuccess.copy(alpha = 0.4f) else CosmicCardBorder
         )
@@ -277,7 +415,7 @@ private fun PermissionCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = CosmicSecondary),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CosmicSecondary)
+                    border = BorderStroke(1.dp, CosmicSecondary)
                 ) {
                     Text(text = buttonText, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                 }
@@ -286,3 +424,32 @@ private fun PermissionCard(
     }
 }
 
+private fun openUsageSettings(context: Context) {
+    try {
+        val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+            data = Uri.parse("package:" + context.packageName)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        context.startActivity(intent)
+    } catch (_: Exception) {
+        val fallback = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        context.startActivity(fallback)
+    }
+}
+
+private fun openAppDetailsSettings(context: Context) {
+    try {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.parse("package:" + context.packageName)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        context.startActivity(intent)
+    } catch (_: Exception) {
+        val fallback = Intent(Settings.ACTION_SETTINGS).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        context.startActivity(fallback)
+    }
+}

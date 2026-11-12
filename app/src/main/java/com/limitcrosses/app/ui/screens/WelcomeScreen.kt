@@ -167,7 +167,11 @@ fun WelcomeScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            com.limitcrosses.app.ui.components.PankajYadavFooter(detailed = true)
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

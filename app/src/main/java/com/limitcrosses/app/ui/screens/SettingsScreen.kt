@@ -31,6 +31,7 @@ fun SettingsScreen(
     onAccountDeleted: () -> Unit
 ) {
     val uiState by settingsViewModel.uiState.collectAsState()
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     Scaffold(
         containerColor = CosmicBackground,
@@ -247,6 +248,67 @@ fun SettingsScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Permissions & Restricted Settings Shortcut
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                color = CosmicSurface,
+                border = androidx.compose.foundation.BorderStroke(1.dp, CosmicCardBorder)
+            ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Text(
+                        text = "Permissions & Tracking Access",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = CosmicTextPrimary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "If settings are greyed out, use 'Unlock Restricted Settings' to open App Info and tap ⋮ -> Allow restricted settings.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CosmicTextSecondary,
+                        lineHeight = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                val intent = android.content.Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.weight(1f).height(40.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CosmicSecondary),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CosmicSecondary)
+                        ) {
+                            Text("Usage Access", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        Button(
+                            onClick = {
+                                val intent = android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = android.net.Uri.parse("package:" + context.packageName)
+                                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.weight(1f).height(40.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = CosmicWarning.copy(alpha = 0.85f))
+                        ) {
+                            Text("Unlock in App Info", color = CosmicBackground, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             // Sign Out
@@ -277,7 +339,11 @@ fun SettingsScreen(
                 Text(text = stringResource(R.string.action_delete_account), color = CosmicDanger, fontWeight = FontWeight.Bold)
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            com.limitcrosses.app.ui.components.PankajYadavFooter(detailed = true)
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 

@@ -87,6 +87,8 @@
     <string name="dash_tracking_active_badge">सक्रिय और निगरानी जारी</string>
     <string name="dash_warning_permissions_disabled">निगरानी बाधित: उपयोग अनुमति अनुपलब्ध है।</string>
     <string name="dash_warning_tracking_inactive">ट्रैकिंग निष्क्रिय: निगरानी सक्षम करने के लिए अनुमतियां दें।</string>
+    <string name="dialog_sign_out_message">क्या आप वाकई लिमिट क्रॉसेस से साइन आउट करना चाहते हैं?</string>
+    <string name="dialog_sign_out_title">साइन आउट करें</string>
     <string name="ext_admin_notes">एडमिन टिप्पणी: %1$s</string>
     <string name="ext_btn_submit">एडमिन को सबमिट करें</string>
     <string name="ext_history_title">आपके अनुरोध</string>
@@ -100,6 +102,8 @@
     <string name="ext_status_pending">समीक्षाधीन</string>
     <string name="ext_subtitle">अस्थायी अतिरिक्त मिनटों के लिए अनुरोध भेजें। आपके एडमिन द्वारा समीक्षा की जाएगी।</string>
     <string name="ext_title">अतिरिक्त समय का अनुरोध</string>
+    <string name="footer_crafted_by">पंकज यादव द्वारा विशेष रूप से निर्मित</string>
+    <string name="footer_created_by">पंकज यादव द्वारा निर्मित</string>
     <string name="limit_btn_confirm_lock">पुष्टि करें और लॉक करें</string>
     <string name="limit_combined_rule_notice">महत्वपूर्ण: यह सभी 3 प्लेटफ़ॉर्म में साझा की गई एकल संयुक्त सीमा है, प्रत्येक के लिए 45 मिनट नहीं।</string>
     <string name="limit_locked_desc">आपकी दैनिक सीमा %1$d मिनट तय है। बदलाव के लिए अतिरिक्त समय का अनुरोध करें या एडमिन से संपर्क करें।</string>
@@ -125,11 +129,17 @@
     <string name="nav_usage">उपयोग विवरण</string>
     <string name="nav_welcome">स्वागत</string>
     <string name="perm_btn_continue_to_limit">सीमा सेटअप पर जाएं</string>
+    <string name="perm_bypass_demo_btn">ऑफ़लाइन डेमो मोड में जारी रखें</string>
     <string name="perm_granted">अनुमति प्राप्त</string>
     <string name="perm_missing">आवश्यक / शेष</string>
     <string name="perm_notifications_btn">सूचनाएं सक्षम करें</string>
     <string name="perm_notifications_desc">सीमा के करीब पहुंचने पर अलर्ट और दैनिक उलटी गिनती भेजने के लिए आवश्यक है।</string>
     <string name="perm_notifications_title">सूचना अनुमति</string>
+    <string name="perm_open_app_info">ऐप जानकारी खोलें</string>
+    <string name="perm_restricted_settings_btn">अनलॉक करने के लिए ऐप जानकारी खोलें</string>
+    <string name="perm_restricted_settings_desc">Android 13+ पर ऐप्स के लिए एक बार अनुमति चाहिए। नीचे दिए गए बटन पर टैप करें, ऊपर दाईं ओर 3 डॉट्स (⋮) पर टैप करें और \"Allow restricted settings\" चुनें।</string>
+    <string name="perm_restricted_settings_guide">1. ऊपर दाईं ओर ⋮ (3 डॉट्स) पर टैप करें\n2. \"Allow restricted settings\" चुनें\n3. डिवाइस पिन दर्ज करें\n4. वापस आकर उपयोग पहुंच (Usage Access) चालू करें</string>
+    <string name="perm_restricted_settings_title">सेटिंग अक्षम (Disabled) दिख रही है?</string>
     <string name="perm_subtitle">लिमिट क्रॉसेस को फ़ोरग्राउंड ऐप्स के उपयोग की सटीक निगरानी के लिए विशिष्ट अनुमतियों की आवश्यकता होती है।</string>
     <string name="perm_title">आवश्यक अनुमतियां</string>
     <string name="perm_usage_btn">उपयोग सेटिंग्स खोलें</string>

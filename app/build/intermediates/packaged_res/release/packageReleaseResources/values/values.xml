@@ -103,6 +103,8 @@
     <string name="dash_tracking_active_badge">Active &amp; Monitoring</string>
     <string name="dash_warning_permissions_disabled">Tracking Degraded: Usage permissions are missing. Timers may be inaccurate.</string>
     <string name="dash_warning_tracking_inactive">Tracking Inactive: Grant permissions to enable real-time tracking.</string>
+    <string name="dialog_sign_out_message">Are you sure you want to sign out of Limit Crosses?</string>
+    <string name="dialog_sign_out_title">Sign Out</string>
     <string name="ext_admin_notes">Admin Note: %1$s</string>
     <string name="ext_btn_submit">Submit to Administrator</string>
     <string name="ext_history_title">Your Requests</string>
@@ -116,6 +118,8 @@
     <string name="ext_status_pending">Pending Review</string>
     <string name="ext_subtitle">Submit a request for temporary additional minutes. Your Administrator reviews and determines approvals.</string>
     <string name="ext_title">Request Extra Allowance</string>
+    <string name="footer_crafted_by">Crafted with mindful focus by Pankaj Yadav</string>
+    <string name="footer_created_by">App created by Pankaj Yadav</string>
     <string name="limit_btn_confirm_lock">Confirm &amp; Lock Limit</string>
     <string name="limit_combined_rule_notice">Important: This is a single combined allowance shared across all 3 platforms, NOT 45 minutes each.</string>
     <string name="limit_locked_desc">Your daily limit is fixed at %1$d minutes. To request a permanent change, submit an extension request or contact your Administrator.</string>
@@ -141,11 +145,17 @@
     <string name="nav_usage">Usage Details</string>
     <string name="nav_welcome">Welcome</string>
     <string name="perm_btn_continue_to_limit">Continue to Limit Setup</string>
+    <string name="perm_bypass_demo_btn">Proceed in Offline Demo Mode</string>
     <string name="perm_granted">Granted</string>
     <string name="perm_missing">Required / Missing</string>
     <string name="perm_notifications_btn">Allow Notifications</string>
     <string name="perm_notifications_desc">Required to send approaching limit alerts and persistent daily reset countdowns.</string>
     <string name="perm_notifications_title">Notification Access</string>
+    <string name="perm_open_app_info">Open App Info</string>
+    <string name="perm_restricted_settings_btn">Unlock Restricted Settings</string>
+    <string name="perm_restricted_settings_desc">On Android 13+, sideloaded apps require one-time approval before Android allows granting Usage Access. Tap below to open App Info, tap the 3 dots (⋮) in the top-right corner, and select \"Allow restricted settings\".</string>
+    <string name="perm_restricted_settings_guide">1. Tap ⋮ (3 dots) in top-right\n2. Select \"Allow restricted settings\"\n3. Enter device PIN\n4. Return here to enable Usage Access</string>
+    <string name="perm_restricted_settings_title">Setting Disabled or Greyed Out?</string>
     <string name="perm_subtitle">Limit Crosses requires specific Android permissions to accurately monitor foreground app durations and protect limits. Review and grant each below.</string>
     <string name="perm_title">Required Permissions</string>
     <string name="perm_usage_btn">Open Usage Settings</string>

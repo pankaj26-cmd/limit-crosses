@@ -1064,6 +1064,8 @@ string dash_warning_permissions_disabled
 string dash_warning_tracking_inactive
 string default_error_message
 string default_popup_window_title
+string dialog_sign_out_message
+string dialog_sign_out_title
 string dropdown_menu
 string ext_admin_notes
 string ext_btn_submit
@@ -1081,6 +1083,8 @@ string ext_title
 string fallback_menu_item_copy_link
 string fallback_menu_item_open_in_browser
 string fallback_menu_item_share_link
+string footer_crafted_by
+string footer_created_by
 string in_progress
 string indeterminate
 string limit_btn_confirm_lock
@@ -1167,11 +1171,17 @@ string nav_welcome
 string navigation_menu
 string not_selected
 string perm_btn_continue_to_limit
+string perm_bypass_demo_btn
 string perm_granted
 string perm_missing
 string perm_notifications_btn
 string perm_notifications_desc
 string perm_notifications_title
+string perm_open_app_info
+string perm_restricted_settings_btn
+string perm_restricted_settings_desc
+string perm_restricted_settings_guide
+string perm_restricted_settings_title
 string perm_subtitle
 string perm_title
 string perm_usage_btn

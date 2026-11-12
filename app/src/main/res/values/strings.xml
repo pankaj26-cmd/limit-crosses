@@ -217,5 +217,21 @@
     <string name="privacy_section_admin_visibility_body">Admins see: your email/name, daily limit status, total minutes used today, and extension requests. Admins cannot view your personal content or browsing history.</string>
     <string name="privacy_section_retention_title">Data Retention &amp; Deletion</string>
     <string name="privacy_section_retention_body">Aggregated daily usage totals are retained for 30 days for trend analysis and then permanently pruned. Deleting your account deletes all data instantly.</string>
+
+    <!-- Creator Attribution -->
+    <string name="footer_created_by">App created by Pankaj Yadav</string>
+    <string name="footer_crafted_by">Crafted with mindful focus by Pankaj Yadav</string>
+
+    <!-- Restricted Settings Unblocker (Android 13+) -->
+    <string name="perm_restricted_settings_title">Setting Disabled or Greyed Out?</string>
+    <string name="perm_restricted_settings_desc">On Android 13+, sideloaded apps require one-time approval before Android allows granting Usage Access. Tap below to open App Info, tap the 3 dots (⋮) in the top-right corner, and select \"Allow restricted settings\".</string>
+    <string name="perm_restricted_settings_btn">Unlock Restricted Settings</string>
+    <string name="perm_restricted_settings_guide">1. Tap ⋮ (3 dots) in top-right\n2. Select \"Allow restricted settings\"\n3. Enter device PIN\n4. Return here to enable Usage Access</string>
+    <string name="perm_bypass_demo_btn">Proceed in Offline Demo Mode</string>
+    <string name="perm_open_app_info">Open App Info</string>
+
+    <!-- Sign Out Dialog -->
+    <string name="dialog_sign_out_title">Sign Out</string>
+    <string name="dialog_sign_out_message">Are you sure you want to sign out of Limit Crosses?</string>
 </resources>
 

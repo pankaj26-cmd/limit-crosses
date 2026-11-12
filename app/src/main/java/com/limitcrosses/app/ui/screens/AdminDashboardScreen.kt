@@ -17,9 +17,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.ui.unit.sp
 import com.limitcrosses.app.R
 import com.limitcrosses.app.core.model.*
+import com.limitcrosses.app.ui.components.PankajYadavFooter
 import com.limitcrosses.app.ui.theme.*
 import com.limitcrosses.app.ui.viewmodel.AdminViewModel
 import java.text.SimpleDateFormat
@@ -30,7 +33,8 @@ import java.util.Locale
 @Composable
 fun AdminDashboardScreen(
     viewModel: AdminViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onLoggedOut: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -39,6 +43,7 @@ fun AdminDashboardScreen(
     var inviteNotes by remember { mutableStateOf("") }
 
     var showModifyLimitDialog by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
     var targetUserToModify by remember { mutableStateOf<UserAccount?>(null) }
     var newLimitInput by remember { mutableStateOf("30") }
     var auditReasonInput by remember { mutableStateOf("") }
@@ -47,15 +52,18 @@ fun AdminDashboardScreen(
         containerColor = CosmicBackground,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.admin_title), color = CosmicTextPrimary) },
+                title = { Text(stringResource(R.string.admin_title), color = CosmicTextPrimary, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.action_back), tint = CosmicTextPrimary)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back), tint = CosmicTextPrimary)
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.refreshAll() }) {
                         Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.action_refresh), tint = CosmicTextPrimary)
+                    }
+                    IconButton(onClick = { showLogoutDialog = true }) {
+                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = stringResource(R.string.action_logout), tint = CosmicDanger)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = CosmicBackground)
@@ -448,6 +456,34 @@ fun AdminDashboardScreen(
                     Text(stringResource(R.string.action_cancel))
                 }
             }
+        )
+    }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(stringResource(R.string.dialog_sign_out_title), fontWeight = FontWeight.Bold, color = CosmicTextPrimary) },
+            text = { Text(stringResource(R.string.dialog_sign_out_message), color = CosmicTextSecondary) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showLogoutDialog = false
+                        viewModel.logout {
+                            onLoggedOut()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CosmicDanger)
+                ) {
+                    Text(stringResource(R.string.action_logout), color = androidx.compose.ui.graphics.Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(stringResource(R.string.action_cancel), color = CosmicTextSecondary)
+                }
+            },
+            containerColor = CosmicCard,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }

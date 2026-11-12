@@ -143,7 +143,13 @@ fun LimitCrossesNavGraph(
                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                 onNavigateToAdmin = { navController.navigate(Screen.AdminDashboard.route) },
                 onNavigateToPuzzles = { navController.navigate(Screen.PuzzleLevels.route) },
-                onNavigateToLimitReached = { navController.navigate(Screen.LimitReached.route) }
+                onNavigateToLimitReached = { navController.navigate(Screen.LimitReached.route) },
+                onNavigateToPermissions = { navController.navigate(Screen.PermissionsChecklist.route) },
+                onLoggedOut = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -189,6 +195,11 @@ fun LimitCrossesNavGraph(
                         navController.popBackStack()
                     } else {
                         navController.navigate(Screen.Welcome.route)
+                    }
+                },
+                onLoggedOut = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )

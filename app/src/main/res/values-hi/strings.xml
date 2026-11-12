@@ -217,5 +217,21 @@
     <string name="privacy_section_admin_visibility_body">एडमिन आपका नाम/ईमेल, दैनिक सीमा, आज का कुल उपयोग और विस्तार अनुरोध देख सकते हैं। वे आपकी व्यक्तिगत सामग्री नहीं देख सकते।</string>
     <string name="privacy_section_retention_title">डेटा प्रतिधारण और विलोपन</string>
     <string name="privacy_section_retention_body">दैनिक उपयोग कुल 30 दिनों तक रहता है और फिर मिटा दिया जाता है। खाता हटाने पर सारा डेटा तुरंत नष्ट हो जाता है।</string>
+
+    <!-- Creator Attribution -->
+    <string name="footer_created_by">पंकज यादव द्वारा निर्मित</string>
+    <string name="footer_crafted_by">पंकज यादव द्वारा विशेष रूप से निर्मित</string>
+
+    <!-- Restricted Settings Unblocker (Android 13+) -->
+    <string name="perm_restricted_settings_title">सेटिंग अक्षम (Disabled) दिख रही है?</string>
+    <string name="perm_restricted_settings_desc">Android 13+ पर ऐप्स के लिए एक बार अनुमति चाहिए। नीचे दिए गए बटन पर टैप करें, ऊपर दाईं ओर 3 डॉट्स (⋮) पर टैप करें और \"Allow restricted settings\" चुनें।</string>
+    <string name="perm_restricted_settings_btn">अनलॉक करने के लिए ऐप जानकारी खोलें</string>
+    <string name="perm_restricted_settings_guide">1. ऊपर दाईं ओर ⋮ (3 डॉट्स) पर टैप करें\n2. \"Allow restricted settings\" चुनें\n3. डिवाइस पिन दर्ज करें\n4. वापस आकर उपयोग पहुंच (Usage Access) चालू करें</string>
+    <string name="perm_bypass_demo_btn">ऑफ़लाइन डेमो मोड में जारी रखें</string>
+    <string name="perm_open_app_info">ऐप जानकारी खोलें</string>
+
+    <!-- Sign Out Dialog -->
+    <string name="dialog_sign_out_title">साइन आउट करें</string>
+    <string name="dialog_sign_out_message">क्या आप वाकई लिमिट क्रॉसेस से साइन आउट करना चाहते हैं?</string>
 </resources>
 

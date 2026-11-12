@@ -1,0 +1,66 @@
+com.limitcrosses.app-ui-text-release-0 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\05d250ba0bbcb60ccae39c725ab59751\transformed\ui-text-release\res
+com.limitcrosses.app-ui-test-manifest-1.7.5-1 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\05f00e8650cd0126c8b972a34e413c41\transformed\ui-test-manifest-1.7.5\res
+com.limitcrosses.app-startup-runtime-1.1.1-2 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\0742b9a5aa5c035840613019e695bf14\transformed\startup-runtime-1.1.1\res
+com.limitcrosses.app-lifecycle-viewmodel-savedstate-2.8.7-3 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\075f62e924f6ecc130ec25f6781f4a90\transformed\lifecycle-viewmodel-savedstate-2.8.7\res
+com.limitcrosses.app-appcompat-resources-1.6.1-4 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\08af9582d3ebe3b345ec6144c0ad2c90\transformed\appcompat-resources-1.6.1\res
+com.limitcrosses.app-ui-tooling-preview-release-5 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\0a37de4e45dc0f92bfa9100d8ba844b9\transformed\ui-tooling-preview-release\res
+com.limitcrosses.app-graphics-path-1.0.1-6 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\0f1257195e920102927d7094e7ef9b21\transformed\graphics-path-1.0.1\res
+com.limitcrosses.app-savedstate-ktx-1.2.1-7 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\13fcb8136392471c9e0c944a1fccaf6d\transformed\savedstate-ktx-1.2.1\res
+com.limitcrosses.app-foundation-layout-release-8 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\18a8a4f4f5beca28107b84d29aa42434\transformed\foundation-layout-release\res
+com.limitcrosses.app-runtime-saveable-release-9 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\1a646fe41a8887bf6ab4602729360ff8\transformed\runtime-saveable-release\res
+com.limitcrosses.app-tracing-1.2.0-10 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\1ae6940f8f6bd18e6625ee04f9cef99b\transformed\tracing-1.2.0\res
+com.limitcrosses.app-lifecycle-livedata-2.8.7-11 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\1d423959a19bfa1d6e045a7414b1f746\transformed\lifecycle-livedata-2.8.7\res
+com.limitcrosses.app-lifecycle-viewmodel-release-12 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\216b9b678d99cb22276319388c8645b6\transformed\lifecycle-viewmodel-release\res
+com.limitcrosses.app-browser-1.8.0-13 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\21d9a75692a7a89b62d6c0e0865feb75\transformed\browser-1.8.0\res
+com.limitcrosses.app-lifecycle-livedata-core-ktx-2.8.7-14 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\2d980b9aba5588daab0abfa90961f419\transformed\lifecycle-livedata-core-ktx-2.8.7\res
+com.limitcrosses.app-ui-unit-release-15 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\37a9b6c62a8d84731309e22a6b96f320\transformed\ui-unit-release\res
+com.limitcrosses.app-ui-geometry-release-16 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\3bcb800d7a1b1127fbb00695c5236b13\transformed\ui-geometry-release\res
+com.limitcrosses.app-fragment-1.6.2-17 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\45a97ccac34b8bf554357dc305a2f5dc\transformed\fragment-1.6.2\res
+com.limitcrosses.app-animation-release-18 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\4a77ee77df6124b8fcb5a5d75241eddc\transformed\animation-release\res
+com.limitcrosses.app-customview-poolingcontainer-1.0.0-19 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\51e6e25db73e77386e07d43a19eb97b1\transformed\customview-poolingcontainer-1.0.0\res
+com.limitcrosses.app-activity-compose-1.9.3-20 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\520485d2eddc6cad9908e4b92ad5ceef\transformed\activity-compose-1.9.3\res
+com.limitcrosses.app-lifecycle-runtime-compose-release-21 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\5a9ab8e8044ea7427df511954d24e57a\transformed\lifecycle-runtime-compose-release\res
+com.limitcrosses.app-animation-core-release-22 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\5ad5a8d289087abb1fcb6647c7562131\transformed\animation-core-release\res
+com.limitcrosses.app-lifecycle-process-2.8.7-23 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\6903df811cbb85f11706122641b1172c\transformed\lifecycle-process-2.8.7\res
+com.limitcrosses.app-emoji2-views-helper-1.3.0-24 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\6d8e83900af70aa0b93203c415b5c0a5\transformed\emoji2-views-helper-1.3.0\res
+com.limitcrosses.app-security-crypto-1.1.0-alpha06-25 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\729ad58d723228e54a3e90ccb22233df\transformed\security-crypto-1.1.0-alpha06\res
+com.limitcrosses.app-ui-tooling-release-26 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\7c8c0b1787b1daf7acfcc14159e87fce\transformed\ui-tooling-release\res
+com.limitcrosses.app-lifecycle-viewmodel-compose-release-27 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\7cade342218a312c0807add076fd5941\transformed\lifecycle-viewmodel-compose-release\res
+com.limitcrosses.app-material-icons-extended-release-28 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\7e36632d26ff41cd157cf06edf53e3de\transformed\material-icons-extended-release\res
+com.limitcrosses.app-core-runtime-2.2.0-29 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\7e5410cbe05e468b9bb011fc5b206fc1\transformed\core-runtime-2.2.0\res
+com.limitcrosses.app-core-ktx-1.15.0-30 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\7fcb00dfbc47898ffac820fba223ba0d\transformed\core-ktx-1.15.0\res
+com.limitcrosses.app-activity-1.9.3-31 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\9f9802f702bb2b04e28f365c03fb1f7a\transformed\activity-1.9.3\res
+com.limitcrosses.app-ui-release-32 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\a11449c1dab090af7fc1308c326ca9f7\transformed\ui-release\res
+com.limitcrosses.app-navigation-runtime-2.8.3-33 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\a420991d7a093f133926c21d4e7ed575\transformed\navigation-runtime-2.8.3\res
+com.limitcrosses.app-ui-graphics-release-34 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\a7c41e5cec77439c5097ee83bffcceb1\transformed\ui-graphics-release\res
+com.limitcrosses.app-navigation-common-2.8.3-35 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\a83907003d3b9786140b11c3bb20a048\transformed\navigation-common-2.8.3\res
+com.limitcrosses.app-lifecycle-runtime-ktx-release-36 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\ace53ed6ed1d4e9a72dd8dc0377a36f1\transformed\lifecycle-runtime-ktx-release\res
+com.limitcrosses.app-core-1.15.0-37 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b1d0ad77f2a2338faa8f898c489be94f\transformed\core-1.15.0\res
+com.limitcrosses.app-material-ripple-release-38 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b227b0a4d0e75ccf949de8330b19af35\transformed\material-ripple-release\res
+com.limitcrosses.app-emoji2-1.3.0-39 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b28cd5775695ef1d03b86d79cbbd9a42\transformed\emoji2-1.3.0\res
+com.limitcrosses.app-appcompat-1.6.1-40 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b2e46d93fb172517bc1f28b2661aa5a9\transformed\appcompat-1.6.1\res
+com.limitcrosses.app-runtime-release-41 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b300cae987b4f49bc7abdc391489585a\transformed\runtime-release\res
+com.limitcrosses.app-lifecycle-runtime-release-42 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b3759a333b66d7c44c3878d9397d7e09\transformed\lifecycle-runtime-release\res
+com.limitcrosses.app-material-release-43 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\bb9dc785c01cbde293202ee9b1d3e8ba\transformed\material-release\res
+com.limitcrosses.app-activity-ktx-1.9.3-44 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\bf25dc41c83544d5343d30d9b3013b23\transformed\activity-ktx-1.9.3\res
+com.limitcrosses.app-ui-tooling-data-release-45 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\c4da51bd2eb92bf78d9b5f8ea6343b23\transformed\ui-tooling-data-release\res
+com.limitcrosses.app-navigation-common-ktx-2.8.3-46 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\c955a9cce9b98de1d3222db819eb3fa0\transformed\navigation-common-ktx-2.8.3\res
+com.limitcrosses.app-savedstate-1.2.1-47 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\cde40506cf8d94f285fc051d02de53b9\transformed\savedstate-1.2.1\res
+com.limitcrosses.app-foundation-release-48 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d2aa964514fb902144c321d20a8e8198\transformed\foundation-release\res
+com.limitcrosses.app-navigation-compose-2.8.3-49 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d5614e00d01c72dacc2dc83808ba0c28\transformed\navigation-compose-2.8.3\res
+com.limitcrosses.app-material3-release-50 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d994b665cd6ebd7707a0330ba61f2e11\transformed\material3-release\res
+com.limitcrosses.app-profileinstaller-1.3.1-51 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\res
+com.limitcrosses.app-lifecycle-livedata-core-2.8.7-52 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\dc7ccdbb838e3248d605156041f20ff7\transformed\lifecycle-livedata-core-2.8.7\res
+com.limitcrosses.app-ui-util-release-53 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\eb553c92af020e6736384981ca67b7bd\transformed\ui-util-release\res
+com.limitcrosses.app-fragment-ktx-1.6.2-54 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\ed623f676a488a6d0f1ffb8f00a72863\transformed\fragment-ktx-1.6.2\res
+com.limitcrosses.app-navigation-runtime-ktx-2.8.3-55 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\f3f2a0a9eb9c53ebf4cba402d5084f9c\transformed\navigation-runtime-ktx-2.8.3\res
+com.limitcrosses.app-material-icons-core-release-56 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\f6a7444c0552cbba1ff3864e969842f2\transformed\material-icons-core-release\res
+com.limitcrosses.app-lifecycle-viewmodel-ktx-2.8.7-57 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\f935a063dd4db51c4602e965fa56ce56\transformed\lifecycle-viewmodel-ktx-2.8.7\res
+com.limitcrosses.app-annotation-experimental-1.4.1-58 C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\fca13874571e6cc4ee54b412d6933b1d\transformed\annotation-experimental-1.4.1\res
+com.limitcrosses.app-pngs-59 G:\Limit Cross\app\build\generated\res\pngs\debug
+com.limitcrosses.app-resValues-60 G:\Limit Cross\app\build\generated\res\resValues\debug
+com.limitcrosses.app-packageDebugResources-61 G:\Limit Cross\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.limitcrosses.app-packageDebugResources-62 G:\Limit Cross\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.limitcrosses.app-debug-63 G:\Limit Cross\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.limitcrosses.app-debug-64 G:\Limit Cross\app\src\debug\res
+com.limitcrosses.app-main-65 G:\Limit Cross\app\src\main\res

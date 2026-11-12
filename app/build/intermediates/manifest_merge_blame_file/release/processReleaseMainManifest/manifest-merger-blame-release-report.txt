@@ -1,0 +1,261 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.limitcrosses.app"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="35" />
+10
+11    <!-- Permissions required for foreground tracking & notifications -->
+12    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+12-->G:\Limit Cross\app\src\main\AndroidManifest.xml:6:5-8:47
+12-->G:\Limit Cross\app\src\main\AndroidManifest.xml:7:9-62
+13    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+13-->G:\Limit Cross\app\src\main\AndroidManifest.xml:9:5-77
+13-->G:\Limit Cross\app\src\main\AndroidManifest.xml:9:22-74
+14    <uses-permission android:name="android.permission.INTERNET" />
+14-->G:\Limit Cross\app\src\main\AndroidManifest.xml:10:5-67
+14-->G:\Limit Cross\app\src\main\AndroidManifest.xml:10:22-64
+15    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+15-->G:\Limit Cross\app\src\main\AndroidManifest.xml:11:5-79
+15-->G:\Limit Cross\app\src\main\AndroidManifest.xml:11:22-76
+16    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+16-->G:\Limit Cross\app\src\main\AndroidManifest.xml:12:5-77
+16-->G:\Limit Cross\app\src\main\AndroidManifest.xml:12:22-74
+17    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+17-->G:\Limit Cross\app\src\main\AndroidManifest.xml:13:5-89
+17-->G:\Limit Cross\app\src\main\AndroidManifest.xml:13:22-86
+18
+19    <!-- Query targets for monitored apps to follow Android 11+ package visibility rules -->
+20    <queries>
+20-->G:\Limit Cross\app\src\main\AndroidManifest.xml:16:5-20:15
+21        <package android:name="com.facebook.katana" />
+21-->G:\Limit Cross\app\src\main\AndroidManifest.xml:17:9-55
+21-->G:\Limit Cross\app\src\main\AndroidManifest.xml:17:18-52
+22        <package android:name="com.instagram.android" />
+22-->G:\Limit Cross\app\src\main\AndroidManifest.xml:18:9-57
+22-->G:\Limit Cross\app\src\main\AndroidManifest.xml:18:18-54
+23        <package android:name="com.snapchat.android" />
+23-->G:\Limit Cross\app\src\main\AndroidManifest.xml:19:9-56
+23-->G:\Limit Cross\app\src\main\AndroidManifest.xml:19:18-53
+24    </queries>
+25
+26    <permission
+26-->[androidx.core:core:1.15.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b1d0ad77f2a2338faa8f898c489be94f\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
+27        android:name="com.limitcrosses.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+27-->[androidx.core:core:1.15.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b1d0ad77f2a2338faa8f898c489be94f\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
+28        android:protectionLevel="signature" />
+28-->[androidx.core:core:1.15.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b1d0ad77f2a2338faa8f898c489be94f\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
+29
+30    <uses-permission android:name="com.limitcrosses.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+30-->[androidx.core:core:1.15.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b1d0ad77f2a2338faa8f898c489be94f\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
+30-->[androidx.core:core:1.15.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b1d0ad77f2a2338faa8f898c489be94f\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
+31
+32    <application
+32-->G:\Limit Cross\app\src\main\AndroidManifest.xml:22:5-92:19
+33        android:name="com.limitcrosses.app.LimitCrossesApp"
+33-->G:\Limit Cross\app\src\main\AndroidManifest.xml:23:9-40
+34        android:allowBackup="false"
+34-->G:\Limit Cross\app\src\main\AndroidManifest.xml:24:9-36
+35        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+35-->[androidx.core:core:1.15.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b1d0ad77f2a2338faa8f898c489be94f\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
+36        android:dataExtractionRules="@xml/data_extraction_rules"
+36-->G:\Limit Cross\app\src\main\AndroidManifest.xml:25:9-65
+37        android:extractNativeLibs="false"
+38        android:fullBackupContent="false"
+38-->G:\Limit Cross\app\src\main\AndroidManifest.xml:26:9-42
+39        android:icon="@android:drawable/sym_def_app_icon"
+39-->G:\Limit Cross\app\src\main\AndroidManifest.xml:27:9-58
+40        android:label="@string/app_name"
+40-->G:\Limit Cross\app\src\main\AndroidManifest.xml:28:9-41
+41        android:roundIcon="@android:drawable/sym_def_app_icon"
+41-->G:\Limit Cross\app\src\main\AndroidManifest.xml:29:9-63
+42        android:supportsRtl="true"
+42-->G:\Limit Cross\app\src\main\AndroidManifest.xml:30:9-35
+43        android:theme="@style/Theme.LimitCrosses" >
+43-->G:\Limit Cross\app\src\main\AndroidManifest.xml:31:9-50
+44        <activity
+44-->G:\Limit Cross\app\src\main\AndroidManifest.xml:33:9-52:20
+45            android:name="com.limitcrosses.app.MainActivity"
+45-->G:\Limit Cross\app\src\main\AndroidManifest.xml:34:13-41
+46            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+46-->G:\Limit Cross\app\src\main\AndroidManifest.xml:36:13-87
+47            android:exported="true"
+47-->G:\Limit Cross\app\src\main\AndroidManifest.xml:35:13-36
+48            android:windowSoftInputMode="adjustResize" >
+48-->G:\Limit Cross\app\src\main\AndroidManifest.xml:37:13-55
+49            <intent-filter>
+49-->G:\Limit Cross\app\src\main\AndroidManifest.xml:38:13-41:29
+50                <action android:name="android.intent.action.MAIN" />
+50-->G:\Limit Cross\app\src\main\AndroidManifest.xml:39:17-69
+50-->G:\Limit Cross\app\src\main\AndroidManifest.xml:39:25-66
+51
+52                <category android:name="android.intent.category.LAUNCHER" />
+52-->G:\Limit Cross\app\src\main\AndroidManifest.xml:40:17-77
+52-->G:\Limit Cross\app\src\main\AndroidManifest.xml:40:27-74
+53            </intent-filter>
+54
+55            <!-- Deep link support for invitation codes: limitcrosses://invite?code=XYZ -->
+56            <intent-filter>
+56-->G:\Limit Cross\app\src\main\AndroidManifest.xml:44:13-51:29
+57                <action android:name="android.intent.action.VIEW" />
+57-->G:\Limit Cross\app\src\main\AndroidManifest.xml:45:17-69
+57-->G:\Limit Cross\app\src\main\AndroidManifest.xml:45:25-66
+58
+59                <category android:name="android.intent.category.DEFAULT" />
+59-->G:\Limit Cross\app\src\main\AndroidManifest.xml:46:17-76
+59-->G:\Limit Cross\app\src\main\AndroidManifest.xml:46:27-73
+60                <category android:name="android.intent.category.BROWSABLE" />
+60-->G:\Limit Cross\app\src\main\AndroidManifest.xml:47:17-78
+60-->G:\Limit Cross\app\src\main\AndroidManifest.xml:47:27-75
+61
+62                <data
+62-->G:\Limit Cross\app\src\main\AndroidManifest.xml:48:17-50:45
+63                    android:host="invite"
+63-->G:\Limit Cross\app\src\main\AndroidManifest.xml:50:21-42
+64                    android:scheme="limitcrosses" />
+64-->G:\Limit Cross\app\src\main\AndroidManifest.xml:49:21-50
+65            </intent-filter>
+66        </activity>
+67
+68        <!-- Local DNS VpnService -->
+69        <service
+69-->G:\Limit Cross\app\src\main\AndroidManifest.xml:55:9-66:19
+70            android:name="com.limitcrosses.app.platform.vpn.LimitCrossesVpnService"
+70-->G:\Limit Cross\app\src\main\AndroidManifest.xml:56:13-64
+71            android:exported="false"
+71-->G:\Limit Cross\app\src\main\AndroidManifest.xml:57:13-37
+72            android:foregroundServiceType="specialUse"
+72-->G:\Limit Cross\app\src\main\AndroidManifest.xml:58:13-55
+73            android:permission="android.permission.BIND_VPN_SERVICE" >
+73-->G:\Limit Cross\app\src\main\AndroidManifest.xml:59:13-69
+74            <intent-filter>
+74-->G:\Limit Cross\app\src\main\AndroidManifest.xml:60:13-62:29
+75                <action android:name="android.net.VpnService" />
+75-->G:\Limit Cross\app\src\main\AndroidManifest.xml:61:17-65
+75-->G:\Limit Cross\app\src\main\AndroidManifest.xml:61:25-62
+76            </intent-filter>
+77
+78            <property
+78-->G:\Limit Cross\app\src\main\AndroidManifest.xml:63:13-65:101
+79                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+79-->G:\Limit Cross\app\src\main\AndroidManifest.xml:64:17-76
+80                android:value="Local DNS domain resolution monitoring without content decryption" />
+80-->G:\Limit Cross\app\src\main\AndroidManifest.xml:65:17-98
+81        </service>
+82
+83        <!-- Broadcast receiver for local midnight reset and timezone changes -->
+84        <receiver
+84-->G:\Limit Cross\app\src\main\AndroidManifest.xml:69:9-77:20
+85            android:name="com.limitcrosses.app.platform.receiver.MidnightResetReceiver"
+85-->G:\Limit Cross\app\src\main\AndroidManifest.xml:70:13-68
+86            android:exported="false" >
+86-->G:\Limit Cross\app\src\main\AndroidManifest.xml:71:13-37
+87            <intent-filter>
+87-->G:\Limit Cross\app\src\main\AndroidManifest.xml:72:13-76:29
+88                <action android:name="android.intent.action.TIME_SET" />
+88-->G:\Limit Cross\app\src\main\AndroidManifest.xml:73:17-73
+88-->G:\Limit Cross\app\src\main\AndroidManifest.xml:73:25-70
+89                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+89-->G:\Limit Cross\app\src\main\AndroidManifest.xml:74:17-81
+89-->G:\Limit Cross\app\src\main\AndroidManifest.xml:74:25-78
+90                <action android:name="android.intent.action.DATE_CHANGED" />
+90-->G:\Limit Cross\app\src\main\AndroidManifest.xml:75:17-77
+90-->G:\Limit Cross\app\src\main\AndroidManifest.xml:75:25-74
+91            </intent-filter>
+92        </receiver>
+93
+94        <!-- Optional Device Admin Receiver for enterprise / managed mode -->
+95        <receiver
+95-->G:\Limit Cross\app\src\main\AndroidManifest.xml:80:9-90:20
+96            android:name="com.limitcrosses.app.platform.receiver.LimitCrossesDeviceAdminReceiver"
+96-->G:\Limit Cross\app\src\main\AndroidManifest.xml:81:13-78
+97            android:exported="true"
+97-->G:\Limit Cross\app\src\main\AndroidManifest.xml:82:13-36
+98            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+98-->G:\Limit Cross\app\src\main\AndroidManifest.xml:83:13-70
+99            <meta-data
+99-->G:\Limit Cross\app\src\main\AndroidManifest.xml:84:13-86:63
+100                android:name="android.app.device_admin"
+100-->G:\Limit Cross\app\src\main\AndroidManifest.xml:85:17-56
+101                android:resource="@xml/device_admin_sample" />
+101-->G:\Limit Cross\app\src\main\AndroidManifest.xml:86:17-60
+102
+103            <intent-filter>
+103-->G:\Limit Cross\app\src\main\AndroidManifest.xml:87:13-89:29
+104                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+104-->G:\Limit Cross\app\src\main\AndroidManifest.xml:88:17-82
+104-->G:\Limit Cross\app\src\main\AndroidManifest.xml:88:25-79
+105            </intent-filter>
+106        </receiver>
+107
+108        <provider
+108-->[androidx.emoji2:emoji2:1.3.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b28cd5775695ef1d03b86d79cbbd9a42\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+109            android:name="androidx.startup.InitializationProvider"
+109-->[androidx.emoji2:emoji2:1.3.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b28cd5775695ef1d03b86d79cbbd9a42\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+110            android:authorities="com.limitcrosses.app.androidx-startup"
+110-->[androidx.emoji2:emoji2:1.3.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b28cd5775695ef1d03b86d79cbbd9a42\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+111            android:exported="false" >
+111-->[androidx.emoji2:emoji2:1.3.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b28cd5775695ef1d03b86d79cbbd9a42\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+112            <meta-data
+112-->[androidx.emoji2:emoji2:1.3.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b28cd5775695ef1d03b86d79cbbd9a42\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+113                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+113-->[androidx.emoji2:emoji2:1.3.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b28cd5775695ef1d03b86d79cbbd9a42\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+114                android:value="androidx.startup" />
+114-->[androidx.emoji2:emoji2:1.3.0] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\b28cd5775695ef1d03b86d79cbbd9a42\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+115            <meta-data
+115-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\6903df811cbb85f11706122641b1172c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+116                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+116-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\6903df811cbb85f11706122641b1172c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+117                android:value="androidx.startup" />
+117-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\6903df811cbb85f11706122641b1172c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+118            <meta-data
+118-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+119                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+119-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+120                android:value="androidx.startup" />
+120-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+121        </provider>
+122
+123        <receiver
+123-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+124            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+124-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+125            android:directBootAware="false"
+125-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+126            android:enabled="true"
+126-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+127            android:exported="true"
+127-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+128            android:permission="android.permission.DUMP" >
+128-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+129            <intent-filter>
+129-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+130                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+130-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+130-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+131            </intent-filter>
+132            <intent-filter>
+132-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+133                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+133-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+133-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+134            </intent-filter>
+135            <intent-filter>
+135-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+136                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+136-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+136-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+137            </intent-filter>
+138            <intent-filter>
+138-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+139                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+139-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+139-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\IndiPankaj26\.gradle\caches\8.11.1\transforms\d9e30b5950c921477fad579e2f17e9e5\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+140            </intent-filter>
+141        </receiver>
+142    </application>
+143
+144</manifest>

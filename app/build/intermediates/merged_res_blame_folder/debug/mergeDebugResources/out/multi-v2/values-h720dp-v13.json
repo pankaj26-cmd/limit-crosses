@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.limitcrosses.app-mergeDebugResources-61:/values-h720dp-v13/values-h720dp-v13.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\IndiPankaj26\\.gradle\\caches\\8.11.1\\transforms\\b2e46d93fb172517bc1f28b2661aa5a9\\transformed\\appcompat-1.6.1\\res\\values-h720dp-v13\\values-h720dp-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "66",
+                        "endOffsets": "117"
+                    }
+                }
+            ]
+        }
+    ]
+}

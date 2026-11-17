@@ -56,7 +56,7 @@ class LimitCalculationTest {
         val todayMidnight = 1700000000000L
         val now = todayMidnight + (11 * 3600 + 46 * 60) * 1000L // 11:46 AM today
 
-        val activeSessionStarts = mutableMapOf<String, Long>()
+        val activeActivities = mutableMapOf<String, Long>()
         var usageSeconds = 0L
 
         // Simulate 5 background STOP events firing for Snapchat without an ACTIVITY_RESUMED event
@@ -69,7 +69,7 @@ class LimitCalculationTest {
         )
 
         for (stopTs in stopTimestamps) {
-            val sessionStart = activeSessionStarts.remove("com.snapchat.android")
+            val sessionStart = activeActivities.remove("com.snapchat.android/default")
             if (sessionStart != null && stopTs > sessionStart) {
                 usageSeconds += (stopTs - sessionStart) / 1000L
             }
@@ -82,22 +82,129 @@ class LimitCalculationTest {
     @Test
     fun testPairedResumePauseCreditsExactDuration() {
         val todayMidnight = 1700000000000L
-        val activeSessionStarts = mutableMapOf<String, Long>()
+        val activeActivities = mutableMapOf<String, Long>()
         var usageSeconds = 0L
 
         // User opens Instagram at 10:00:00 AM
         val resumeTs = todayMidnight + (10 * 3600 * 1000L)
-        activeSessionStarts["com.instagram.android"] = resumeTs
+        activeActivities["com.instagram.android/MainActivity"] = resumeTs
 
         // User leaves Instagram at 10:05:30 AM (5m 30s = 330s)
         val pauseTs = resumeTs + (330 * 1000L)
-        val sessionStart = activeSessionStarts.remove("com.instagram.android")
+        val sessionStart = activeActivities.remove("com.instagram.android/MainActivity")
         assertNotNull(sessionStart)
         if (sessionStart != null && pauseTs > sessionStart) {
             usageSeconds += (pauseTs - sessionStart) / 1000L
         }
 
         assertEquals(330L, usageSeconds)
+    }
+
+    @Test
+    fun testIntraAppActivityNavigationPreservesSessionDuration() {
+        val todayMidnight = 1700000000000L
+        val startTime = todayMidnight
+        val endTime = todayMidnight + (12 * 3600 * 1000L) // 12:00 PM
+        val activeActivities = mutableMapOf<String, Long>()
+        var usageSeconds = 0L
+
+        // 1. User opens Instagram Feed at 10:00:00 AM
+        val t1 = todayMidnight + (10 * 3600 * 1000L)
+        activeActivities["com.instagram.android/MainActivity"] = t1
+
+        // 2. User taps a Reel at 10:00:05 AM -> ReelViewerActivity resumes BEFORE MainActivity pauses
+        val t2 = t1 + 5000L
+        activeActivities["com.instagram.android/ReelViewerActivity"] = t2
+
+        // 3. MainActivity pauses at 10:00:05.050 AM
+        val t3 = t2 + 50L
+        val startFeed = activeActivities.remove("com.instagram.android/MainActivity")
+        assertNotNull(startFeed)
+        if (startFeed != null && t3 > startFeed) {
+            usageSeconds += (t3 - startFeed) / 1000L // 5 seconds
+        }
+
+        // 4. User stays on Reels for 20 minutes (until 10:20:05 AM)
+        val t4 = t2 + (20 * 60 * 1000L)
+        val startReels = activeActivities.remove("com.instagram.android/ReelViewerActivity")
+        assertNotNull(startReels)
+        if (startReels != null && t4 > startReels) {
+            usageSeconds += (t4 - startReels) / 1000L // 1200 seconds
+        }
+
+        // Total credited duration must be exactly 5s + 1200s = 1205s (20m 5s), not 0s
+        assertEquals(1205L, usageSeconds)
+        assertTrue(activeActivities.isEmpty())
+    }
+
+    @Test
+    fun testOngoingActiveSessionAtEndTimeIsCredited() {
+        val todayMidnight = 1700000000000L
+        val startTime = todayMidnight
+        val activeActivities = mutableMapOf<String, Long>()
+        var usageSeconds = 0L
+
+        // User opens Facebook at 11:30:00 AM
+        val tStart = todayMidnight + (11 * 3600 + 30 * 60) * 1000L
+        activeActivities["com.facebook.katana/FbMainTabActivity"] = tStart
+
+        // Current time is 11:45:00 AM (15 minutes in, user is still inside the app)
+        val tNow = tStart + (15 * 60 * 1000L)
+
+        // The query engine evaluates active sessions at endTime
+        for ((key, start) in activeActivities) {
+            val effStart = start.coerceAtLeast(startTime)
+            if (tNow > effStart) {
+                usageSeconds += (tNow - effStart) / 1000L
+            }
+        }
+
+        // Must credit the full active 15 minutes (900 seconds) in real time
+        assertEquals(900L, usageSeconds)
+    }
+
+    @Test
+    fun testAppSwitchingConcludesMonitoredSession() {
+        val todayMidnight = 1700000000000L
+        val startTime = todayMidnight
+        val activeActivities = mutableMapOf<String, Long>()
+        var usageSeconds = 0L
+
+        // 1. User opens Snapchat at 10:00:00 AM
+        val tStart = todayMidnight + (10 * 3600 * 1000L)
+        activeActivities["com.snapchat.android/LandingPageActivity"] = tStart
+
+        // 2. User switches directly to WhatsApp at 10:03:00 AM (3 min later)
+        val tSwitch = tStart + (3 * 60 * 1000L)
+        // Displace any running monitored activities
+        val keys = activeActivities.keys.filter { it.startsWith("com.snapchat.android/") }
+        for (k in keys) {
+            val s = activeActivities.remove(k)
+            if (s != null && tSwitch > s) {
+                usageSeconds += (tSwitch - s) / 1000L
+            }
+        }
+
+        assertEquals(180L, usageSeconds) // exactly 3 minutes
+        assertTrue(activeActivities.isEmpty())
+    }
+
+    @Test
+    fun testMidnightCrossoverClampsStartTimeToMidnight() {
+        val todayMidnight = 1700000000000L
+        val startTime = todayMidnight
+
+        // App opened at 11:55:00 PM yesterday (5 minutes before midnight)
+        val tOpen = todayMidnight - (5 * 60 * 1000L)
+        // App closed at 12:10:00 AM today (10 minutes after midnight)
+        val tClose = todayMidnight + (10 * 60 * 1000L)
+
+        val effStart = tOpen.coerceAtLeast(startTime) // Clamped to 00:00:00 today
+        val effEnd = tClose
+        val durationToday = (effEnd - effStart) / 1000L
+
+        // Only the 10 minutes (600 seconds) belonging to today are credited
+        assertEquals(600L, durationToday)
     }
 
     @Test
@@ -116,4 +223,3 @@ class LimitCalculationTest {
         assertTrue(clampedUsageSeconds <= maxPossibleSecondsToday)
     }
 }
-

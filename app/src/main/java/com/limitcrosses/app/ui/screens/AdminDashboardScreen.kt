@@ -561,7 +561,7 @@ fun AdminDashboardScreen(
                                                 ) {
                                                     Column(modifier = Modifier.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                                         Text("Facebook", fontSize = 11.sp, color = BrandFacebook, fontWeight = FontWeight.Bold)
-                                                        Text("${fbSec / 60}m", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = CosmicTextPrimary)
+                                                        Text(if (fbSec in 1..59) "<1m" else "${fbSec / 60}m", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = CosmicTextPrimary)
                                                     }
                                                 }
                                                 // Instagram Card
@@ -572,7 +572,7 @@ fun AdminDashboardScreen(
                                                 ) {
                                                     Column(modifier = Modifier.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                                         Text("Instagram", fontSize = 11.sp, color = BrandInstagram, fontWeight = FontWeight.Bold)
-                                                        Text("${igSec / 60}m", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = CosmicTextPrimary)
+                                                        Text(if (igSec in 1..59) "<1m" else "${igSec / 60}m", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = CosmicTextPrimary)
                                                     }
                                                 }
                                                 // Snapchat Card
@@ -583,7 +583,7 @@ fun AdminDashboardScreen(
                                                 ) {
                                                     Column(modifier = Modifier.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                                         Text("Snapchat", fontSize = 11.sp, color = BrandSnapchat, fontWeight = FontWeight.Bold)
-                                                        Text("${scSec / 60}m", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = CosmicTextPrimary)
+                                                        Text(if (scSec in 1..59) "<1m" else "${scSec / 60}m", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = CosmicTextPrimary)
                                                     }
                                                 }
                                             }

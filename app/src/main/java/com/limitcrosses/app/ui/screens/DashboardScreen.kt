@@ -493,8 +493,8 @@ fun DashboardScreen(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.size(140.dp)
                         ) {
-                            val progressFraction = if (limitMin > 0) {
-                                (totalUsedMin.toFloat() / limitMin.toFloat()).coerceIn(0f, 1f)
+                            val progressFraction = if (limitMin > 0 && report != null) {
+                                (report.totalUsedSeconds.toFloat() / (limitMin * 60f)).coerceIn(0f, 1f)
                             } else 0f
                             val animatedProgress by animateFloatAsState(
                                 targetValue = progressFraction,
@@ -583,7 +583,7 @@ fun DashboardScreen(
                                         color = CosmicTextMuted
                                     )
                                     Text(
-                                        text = "$totalUsedMin m",
+                                        text = if (report != null && report.totalUsedSeconds in 1..59) "< 1 m" else "$totalUsedMin m",
                                         fontWeight = FontWeight.Bold,
                                         color = CosmicPrimary,
                                         fontSize = 16.sp
@@ -878,7 +878,7 @@ private fun AppUsageCard(appInfo: AppUsageInfo, limitMin: Int) {
                     color = CosmicSurface
                 ) {
                     Text(
-                        text = "$usedMin min",
+                        text = if (appInfo.usageSeconds in 1..59) "< 1 min" else "$usedMin min",
                         fontWeight = FontWeight.ExtraBold,
                         color = CosmicTextPrimary,
                         fontSize = 14.sp,

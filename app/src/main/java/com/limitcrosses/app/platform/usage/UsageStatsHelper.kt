@@ -58,24 +58,51 @@ class UsageStatsHelper(private val context: Context) {
     }
 
     /**
-     * Determines which package is currently in the foreground by querying the most recent
-     * ACTIVITY_RESUMED event in the past 10 seconds.
+     * Determines which package is currently in the foreground by examining the latest
+     * lifecycle state transitions over the recent window (looking back to today's midnight or up to 2 hours).
+     * This avoids returning null when a user has been inside an app for more than a few seconds.
      */
     fun getForegroundPackage(): String? {
         if (!hasUsagePermission() || usageStatsManager == null) return null
         val endTime = System.currentTimeMillis()
-        val startTime = endTime - 10_000L
+        val midnight = getTodayMidnightEpochMs()
+        val startTime = (endTime - (2 * 60 * 60 * 1000L)).coerceAtLeast(midnight)
+
         try {
             val events = usageStatsManager.queryEvents(startTime, endTime) ?: return null
             val event = UsageEvents.Event()
-            var lastForegroundPkg: String? = null
+            var topPackage: String? = null
+            var isInteractive = true
+
             while (events.hasNextEvent()) {
                 events.getNextEvent(event)
-                if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
-                    lastForegroundPkg = event.packageName
+                val pkg = event.packageName ?: continue
+                when (event.eventType) {
+                    UsageEvents.Event.ACTIVITY_RESUMED,
+                    1 -> { // MOVE_TO_FOREGROUND
+                        topPackage = pkg
+                        isInteractive = true
+                    }
+                    UsageEvents.Event.ACTIVITY_PAUSED,
+                    2 -> { // MOVE_TO_BACKGROUND
+                        if (pkg == topPackage) {
+                            topPackage = null
+                        }
+                    }
+                    16, // SCREEN_NON_INTERACTIVE
+                    17  // KEYGUARD_SHOWN
+                    -> {
+                        isInteractive = false
+                        topPackage = null
+                    }
+                    15, // SCREEN_INTERACTIVE
+                    18  // KEYGUARD_HIDDEN
+                    -> {
+                        isInteractive = true
+                    }
                 }
             }
-            return lastForegroundPkg
+            return if (isInteractive) topPackage else null
         } catch (_: Exception) {
             return null
         }
@@ -109,13 +136,18 @@ class UsageStatsHelper(private val context: Context) {
 
     /**
      * Queries foreground events or usage stats for the 3 monitored packages since today's midnight.
+     * Uses a multi-activity tracking state machine with boundary clamping to ensure that:
+     * 1. Intra-app navigation (Feed -> Reel -> Comments) does not prematurely clear the session.
+     * 2. Switching to other apps (WhatsApp, Launcher) correctly closes active monitored sessions.
+     * 3. Screen off / device lock cleanly concludes active sessions.
+     * 4. Currently running foreground apps receive active time down to the exact second.
+     * 5. Fallback to aggregated system stats ensures non-zero metrics on restrictive OEM firmware.
      */
     fun queryMonitoredAppUsage(): List<AppUsageInfo> {
         val startTime = getTodayMidnightEpochMs()
         val endTime = System.currentTimeMillis()
 
         if (!hasUsagePermission() || usageStatsManager == null) {
-            // Return empty baseline if permission is not granted
             return MONITORED_PACKAGES.map { (pkg, meta) ->
                 AppUsageInfo(
                     packageName = pkg,
@@ -134,64 +166,149 @@ class UsageStatsHelper(private val context: Context) {
             lastTimeMap[it] = 0L
         }
 
-        // Maximum physical ceiling: cannot exceed elapsed seconds since midnight today
+        // Maximum physical ceiling: cannot exceed elapsed physical seconds since midnight today
         val maxPossibleSecondsToday = ((endTime - startTime) / 1000L).coerceAtLeast(0L)
 
         try {
-            // Primary & Authoritative: Granular UsageEvents bounded strictly by today's midnight timestamp
-            val events = usageStatsManager.queryEvents(startTime, endTime)
+            // Query events starting slightly before midnight to capture ongoing midnight crossovers
+            val queryStart = startTime - (2 * 60 * 60 * 1000L)
+            val events = usageStatsManager.queryEvents(queryStart, endTime)
+
             if (events != null) {
                 val event = UsageEvents.Event()
-                // Track active session start timestamps strictly from ACTIVITY_RESUMED
-                val activeSessionStarts = mutableMapOf<String, Long>()
+                // Map of active activity sessions: "$packageName/$className" -> start timestamp
+                val activeActivities = mutableMapOf<String, Long>()
 
                 while (events.hasNextEvent()) {
                     events.getNextEvent(event)
                     val pkg = event.packageName ?: continue
-                    if (!MONITORED_PACKAGES.containsKey(pkg)) continue
+                    val time = event.timeStamp
+                    val className = event.className ?: "default"
+                    val actKey = "$pkg/$className"
 
                     when (event.eventType) {
-                        UsageEvents.Event.ACTIVITY_RESUMED -> {
-                            // User brought this app to the foreground
-                            activeSessionStarts[pkg] = event.timeStamp
-                            if (event.timeStamp > (lastTimeMap[pkg] ?: 0L)) {
-                                lastTimeMap[pkg] = event.timeStamp
+                        UsageEvents.Event.ACTIVITY_RESUMED,
+                        1 -> { // MOVE_TO_FOREGROUND
+                            if (MONITORED_PACKAGES.containsKey(pkg)) {
+                                // If this activity was already active, credit elapsed duration
+                                val prevStart = activeActivities.remove(actKey)
+                                if (prevStart != null && time > prevStart) {
+                                    val effStart = prevStart.coerceAtLeast(startTime)
+                                    val effEnd = time.coerceAtMost(endTime)
+                                    if (effEnd > effStart) {
+                                        val sec = (effEnd - effStart) / 1000L
+                                        usageMap[pkg] = (usageMap[pkg] ?: 0L) + sec
+                                    }
+                                }
+                                activeActivities[actKey] = time
+                                if (time > (lastTimeMap[pkg] ?: 0L)) {
+                                    lastTimeMap[pkg] = time
+                                }
+                            } else {
+                                // User switched to a non-monitored package (Launcher, WhatsApp, Settings, etc.)
+                                // Conclude all monitored activities currently marked as active
+                                val keysToClose = activeActivities.keys.filter { k ->
+                                    MONITORED_PACKAGES.keys.any { k.startsWith("$it/") }
+                                }
+                                for (k in keysToClose) {
+                                    val start = activeActivities.remove(k)
+                                    if (start != null && time > start) {
+                                        val mPkg = k.substringBefore("/")
+                                        val effStart = start.coerceAtLeast(startTime)
+                                        val effEnd = time.coerceAtMost(endTime)
+                                        if (effEnd > effStart) {
+                                            val sec = (effEnd - effStart) / 1000L
+                                            usageMap[mPkg] = (usageMap[mPkg] ?: 0L) + sec
+                                        }
+                                        if (time > (lastTimeMap[mPkg] ?: 0L)) {
+                                            lastTimeMap[mPkg] = time
+                                        }
+                                    }
+                                }
                             }
                         }
-                        UsageEvents.Event.ACTIVITY_PAUSED -> {
-                            // User left this app: strictly pair with its preceding ACTIVITY_RESUMED event
-                            val sessionStart = activeSessionStarts.remove(pkg)
-                            if (sessionStart != null && event.timeStamp > sessionStart) {
-                                val sessionDurationSec = (event.timeStamp - sessionStart) / 1000L
-                                val safeDurationSec = sessionDurationSec.coerceIn(0L, maxPossibleSecondsToday)
-                                usageMap[pkg] = (usageMap[pkg] ?: 0L) + safeDurationSec
-                            }
-                            if (event.timeStamp > (lastTimeMap[pkg] ?: 0L)) {
-                                lastTimeMap[pkg] = event.timeStamp
+
+                        UsageEvents.Event.ACTIVITY_PAUSED,
+                        2 -> { // MOVE_TO_BACKGROUND
+                            if (MONITORED_PACKAGES.containsKey(pkg)) {
+                                val start = activeActivities.remove(actKey)
+                                if (start != null && time > start) {
+                                    val effStart = start.coerceAtLeast(startTime)
+                                    val effEnd = time.coerceAtMost(endTime)
+                                    if (effEnd > effStart) {
+                                        val sec = (effEnd - effStart) / 1000L
+                                        usageMap[pkg] = (usageMap[pkg] ?: 0L) + sec
+                                    }
+                                }
+                                if (time > (lastTimeMap[pkg] ?: 0L)) {
+                                    lastTimeMap[pkg] = time
+                                }
                             }
                         }
-                        // Intentionally do NOT process ACTIVITY_STOPPED.
-                        // Android fires ACTIVITY_STOPPED alongside ACTIVITY_PAUSED for normal activity exits,
-                        // and also sends it in the background when processes are trimmed.
-                        // Treating ACTIVITY_STOPPED as a session end caused un-paired phantom sessions
-                        // to accumulate thousands of bogus minutes from midnight.
+
+                        16, // SCREEN_NON_INTERACTIVE
+                        17  // KEYGUARD_SHOWN
+                        -> {
+                            // Screen turned off / locked: conclude all active monitored activities
+                            val keysToClose = activeActivities.keys.filter { k ->
+                                MONITORED_PACKAGES.keys.any { k.startsWith("$it/") }
+                            }
+                            for (k in keysToClose) {
+                                val start = activeActivities.remove(k)
+                                if (start != null && time > start) {
+                                    val mPkg = k.substringBefore("/")
+                                    val effStart = start.coerceAtLeast(startTime)
+                                    val effEnd = time.coerceAtMost(endTime)
+                                    if (effEnd > effStart) {
+                                        val sec = (effEnd - effStart) / 1000L
+                                        usageMap[mPkg] = (usageMap[mPkg] ?: 0L) + sec
+                                    }
+                                    if (time > (lastTimeMap[mPkg] ?: 0L)) {
+                                        lastTimeMap[mPkg] = time
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
-                // If an app is *currently* open in the foreground right now, credit its active session
-                val currentForegroundPkg = getForegroundPackage()
-                if (currentForegroundPkg != null && MONITORED_PACKAGES.containsKey(currentForegroundPkg)) {
-                    val sessionStart = activeSessionStarts[currentForegroundPkg]
-                    if (sessionStart != null && endTime > sessionStart) {
-                        val activeDurationSec = ((endTime - sessionStart) / 1000L).coerceIn(0L, maxPossibleSecondsToday)
-                        usageMap[currentForegroundPkg] = (usageMap[currentForegroundPkg] ?: 0L) + activeDurationSec
-                        lastTimeMap[currentForegroundPkg] = endTime
+                // Credit any monitored activities currently still active in the foreground at endTime
+                for ((k, start) in activeActivities) {
+                    val mPkg = k.substringBefore("/")
+                    if (MONITORED_PACKAGES.containsKey(mPkg) && endTime > start) {
+                        val effStart = start.coerceAtLeast(startTime)
+                        val effEnd = endTime
+                        if (effEnd > effStart) {
+                            val activeSec = (effEnd - effStart) / 1000L
+                            usageMap[mPkg] = (usageMap[mPkg] ?: 0L) + activeSec
+                            lastTimeMap[mPkg] = endTime
+                        }
                     }
                 }
             }
         } catch (_: Exception) {}
 
-        // Defense-in-depth: clamp each monitored package to physical elapsed time today
+        // Fallback: If queryEvents produced 0s across all monitored apps (e.g. system usage cache flushed or delayed),
+        // check queryAndAggregateUsageStats directly
+        if (usageMap.values.all { it == 0L }) {
+            try {
+                val aggregated = usageStatsManager.queryAndAggregateUsageStats(startTime, endTime)
+                if (!aggregated.isNullOrEmpty()) {
+                    MONITORED_PACKAGES.keys.forEach { pkg ->
+                        val stat = aggregated[pkg]
+                        if (stat != null && stat.totalTimeInForeground > 0L) {
+                            val sec = (stat.totalTimeInForeground / 1000L).coerceIn(0L, maxPossibleSecondsToday)
+                            usageMap[pkg] = sec
+                            if (stat.lastTimeUsed > (lastTimeMap[pkg] ?: 0L)) {
+                                lastTimeMap[pkg] = stat.lastTimeUsed
+                            }
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+
+        // Clamp each monitored package to physical elapsed time today
         MONITORED_PACKAGES.keys.forEach { pkg ->
             val raw = usageMap[pkg] ?: 0L
             usageMap[pkg] = raw.coerceIn(0L, maxPossibleSecondsToday)
@@ -208,4 +325,3 @@ class UsageStatsHelper(private val context: Context) {
         }
     }
 }
-

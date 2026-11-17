@@ -620,7 +620,7 @@ private fun LimitReachedAppCard(appInfo: AppUsageInfo, limitMin: Int) {
                     color = CosmicSurface
                 ) {
                     Text(
-                        text = "$usedMin min",
+                        text = if (appInfo.usageSeconds in 1..59) "< 1 min" else "$usedMin min",
                         fontWeight = FontWeight.Bold,
                         color = CosmicTextPrimary,
                         fontSize = 13.sp,

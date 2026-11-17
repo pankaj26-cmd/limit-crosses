@@ -22,7 +22,56 @@ class SecurityManagerTest {
         val code = SecurityManager.generateInviteCode()
         assertNotNull(code)
         assertTrue(code.startsWith("LC-"))
-        assertEquals(12, code.length) // LC-XXXX-XXXX: 3 + 4 + 1 + 4 = 12
+        assertEquals(17, code.length) // LC-XXXX-YYYY-ZZZZ: 3 + 4 + 1 + 4 + 1 + 4 = 17
+    }
+
+    @Test
+    fun testUniversalMultiDeviceInviteRoundtrip() {
+        val limits = listOf(0, 15, 30, 45)
+        val validDays = listOf(1, 7, 14, 30, 60, 90)
+
+        for (limit in limits) {
+            for (days in validDays) {
+                val code = SecurityManager.generateUniversalInviteCode(limitMinutes = limit, validDays = days)
+                assertTrue("Code should start with LC-", code.startsWith("LC-"))
+                assertEquals(17, code.length)
+
+                val payload = SecurityManager.decodeAndVerifyUniversalInvite(code)
+                assertNotNull("Payload must be valid for generated code: $code", payload)
+                assertEquals(limit, payload!!.limitMinutes)
+                assertEquals(days, payload.validDays)
+                assertTrue(payload.expiresAtEpochMs > payload.createdAtEpochMs)
+
+                // Tamper resistance test
+                val tamperedChar = if (code.last() != 'A') 'A' else 'B'
+                val tamperedCode = code.dropLast(1) + tamperedChar
+                assertNull("Tampered code must fail cryptographic HMAC verification", SecurityManager.decodeAndVerifyUniversalInvite(tamperedCode))
+            }
+        }
+    }
+
+    @Test
+    fun testUniversalInviteNormalization() {
+        val code = SecurityManager.generateUniversalInviteCode(limitMinutes = 30, validDays = 14)
+        val payloadOriginal = SecurityManager.decodeAndVerifyUniversalInvite(code)
+        assertNotNull(payloadOriginal)
+
+        // Lowercase
+        val lowerPayload = SecurityManager.decodeAndVerifyUniversalInvite(code.lowercase())
+        assertNotNull(lowerPayload)
+        assertEquals(payloadOriginal!!.limitMinutes, lowerPayload!!.limitMinutes)
+
+        // Without LC- prefix
+        val rawCode = code.removePrefix("LC-").replace("-", "")
+        val rawPayload = SecurityManager.decodeAndVerifyUniversalInvite(rawCode)
+        assertNotNull(rawPayload)
+        assertEquals(payloadOriginal.limitMinutes, rawPayload!!.limitMinutes)
+
+        // With spaces
+        val spacedCode = code.replace("-", " ")
+        val spacedPayload = SecurityManager.decodeAndVerifyUniversalInvite(spacedCode)
+        assertNotNull(spacedPayload)
+        assertEquals(payloadOriginal.limitMinutes, spacedPayload!!.limitMinutes)
     }
 
     @Test

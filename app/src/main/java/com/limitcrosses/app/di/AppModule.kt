@@ -17,7 +17,7 @@ val appModule = module {
     single { UsageStatsHelper(androidContext()) }
 
     // Backend Client (defaults to LocalMockBackendEngine which handles both offline & simulated backend rules)
-    single<BackendClient> { LocalMockBackendEngine(get()) }
+    single<BackendClient> { LocalMockBackendEngine(get(), get()) }
 
     // Repositories
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
@@ -29,13 +29,13 @@ val appModule = module {
 
     // ViewModels
     viewModel { AuthViewModel(get()) }
-    viewModel { DashboardViewModel(get()) }
+    viewModel { DashboardViewModel(get(), get(), get()) }
     viewModel { UsageViewModel(get()) }
     viewModel { PermissionsViewModel(androidContext(), get()) }
     viewModel { LimitSetupViewModel(get(), get()) }
-    viewModel { PuzzleViewModel(get(), get()) }
+    viewModel { PuzzleViewModel(get(), get(), get()) }
     viewModel { ExtensionViewModel(get(), get()) }
-    viewModel { AdminViewModel(get(), get()) }
+    viewModel { AdminViewModel(get(), get(), get(), get()) }
     viewModel { CosmosViewModel(get()) }
     viewModel { SettingsViewModel(get(), get()) }
 }

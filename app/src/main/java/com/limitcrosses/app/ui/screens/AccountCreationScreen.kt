@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -261,13 +262,13 @@ fun AccountCreationScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = CosmicPrimary)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = CosmicTextPrimary)
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                 } else {
                     Text(
                         text = stringResource(R.string.auth_btn_create_account),
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
-                        color = CosmicTextPrimary
+                        color = Color.White
                     )
                 }
             }

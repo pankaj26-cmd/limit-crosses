@@ -64,6 +64,7 @@ class LimitSetupViewModel(
 
             result.onSuccess { config ->
                 _uiState.value = _uiState.value.copy(isLocked = config.isLocked)
+                authRepository.refreshCurrentUser()
                 onSuccess()
             }.onFailure { ex ->
                 _uiState.value = _uiState.value.copy(errorMessage = ex.message ?: "Failed to lock limit.")

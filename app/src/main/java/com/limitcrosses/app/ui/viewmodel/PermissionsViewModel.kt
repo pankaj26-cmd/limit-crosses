@@ -31,11 +31,15 @@ class PermissionsViewModel(
             true
         }
         val hasVpn = LimitCrossesVpnService.isPrepared(context)
+        val hasOverlay = com.limitcrosses.app.platform.service.AppBlockerOverlayManager.hasOverlayPermission(context)
+        val hasAccessibility = com.limitcrosses.app.platform.service.LimitCrossesAccessibilityService.isAccessibilityEnabled(context)
 
         _permState.value = PermissionState(
             hasUsageStats = hasUsage,
             hasNotifications = hasNotifications,
-            hasVpn = hasVpn
+            hasVpn = hasVpn,
+            hasOverlay = hasOverlay,
+            hasAccessibility = hasAccessibility
         )
     }
 

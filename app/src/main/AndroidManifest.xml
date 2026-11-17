@@ -11,6 +11,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <!-- Query targets for monitored apps to follow Android 11+ package visibility rules -->
     <queries>
@@ -24,9 +28,9 @@
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
-        android:icon="@android:drawable/sym_def_app_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@android:drawable/sym_def_app_icon"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LimitCrosses">
 
@@ -38,6 +42,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Direct Limit Reached Interception Filter -->
+            <intent-filter>
+                <action android:name="com.limitcrosses.app.ACTION_LIMIT_REACHED" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <!-- Deep link support for invitation codes: limitcrosses://invite?code=XYZ -->
@@ -65,11 +75,23 @@
                 android:value="Local DNS domain resolution monitoring without content decryption" />
         </service>
 
+        <!-- Foreground Monitoring & App Interception Blocker Service -->
+        <service
+            android:name=".platform.service.AppMonitorBlockerService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Monitors foreground social applications to enforce daily usage limits" />
+        </service>
+
         <!-- Broadcast receiver for local midnight reset and timezone changes -->
         <receiver
             android:name=".platform.receiver.MidnightResetReceiver"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
+                <action android:name="com.limitcrosses.app.ACTION_MIDNIGHT_RESET" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="android.intent.action.DATE_CHANGED" />

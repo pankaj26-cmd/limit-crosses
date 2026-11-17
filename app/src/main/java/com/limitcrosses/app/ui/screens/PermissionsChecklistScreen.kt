@@ -15,11 +15,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -30,21 +32,26 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.limitcrosses.app.R
 import com.limitcrosses.app.platform.vpn.LimitCrossesVpnService
+import com.limitcrosses.app.ui.components.DeviceSetupGuideDialog
 import com.limitcrosses.app.ui.components.PankajYadavFooter
 import com.limitcrosses.app.ui.theme.*
+import com.limitcrosses.app.ui.viewmodel.AuthViewModel
 import com.limitcrosses.app.ui.viewmodel.PermissionsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PermissionsChecklistScreen(
     viewModel: PermissionsViewModel,
-    onContinue: () -> Unit
+    authViewModel: AuthViewModel? = null,
+    onContinue: () -> Unit,
+    onLoggedOut: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val permState by viewModel.permState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     var showGuideDialog by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     // Refresh permissions whenever returning to this screen from system settings
     DisposableEffect(lifecycleOwner) {
@@ -82,6 +89,15 @@ fun PermissionsChecklistScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.perm_title), color = CosmicTextPrimary, fontWeight = FontWeight.Bold) },
+                actions = {
+                    IconButton(onClick = { showLogoutDialog = true }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = stringResource(R.string.action_logout),
+                            tint = CosmicDanger
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = CosmicBackground)
             )
         }
@@ -138,11 +154,14 @@ fun PermissionsChecklistScreen(
                             },
                             modifier = Modifier.weight(1f).height(40.dp),
                             shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = CosmicWarning.copy(alpha = 0.85f))
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CosmicWarning.copy(alpha = 0.85f),
+                                contentColor = Color.Black
+                            )
                         ) {
                             Text(
                                 text = stringResource(R.string.perm_restricted_settings_btn),
-                                color = CosmicBackground,
+                                color = Color.Black,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp
                             )
@@ -195,13 +214,35 @@ fun PermissionsChecklistScreen(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // 3. VPN Local Inspection (Optional / Best Effort)
+            // 3. Display Over Other Apps (Overlay Blocker)
+            PermissionCard(
+                title = "Display Over Other Apps (Overlay Lock)",
+                description = "Draws an impassable full-screen lock card directly over Instagram and Snapchat when remaining allowance hits 0 min.",
+                icon = Icons.Default.Layers,
+                isGranted = permState.hasOverlay,
+                buttonText = "Allow Overlay",
+                isOptional = true,
+                onAction = {
+                    val intent = Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:${context.packageName}")
+                    ).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    context.startActivity(intent)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // 4. VPN Local Inspection (Optional / Best Effort)
             PermissionCard(
                 title = stringResource(R.string.perm_vpn_title),
                 description = stringResource(R.string.perm_vpn_desc),
                 icon = Icons.Default.VpnLock,
                 isGranted = permState.hasVpn,
                 buttonText = stringResource(R.string.perm_vpn_btn),
+                isOptional = true,
                 onAction = {
                     val vpnIntent = VpnService.prepare(context)
                     if (vpnIntent != null) {
@@ -233,7 +274,7 @@ fun PermissionsChecklistScreen(
                     text = stringResource(R.string.perm_btn_continue_to_limit),
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
-                    color = CosmicTextPrimary
+                    color = Color.White
                 )
             }
 
@@ -266,64 +307,69 @@ fun PermissionsChecklistScreen(
                 )
             }
 
+            Spacer(modifier = Modifier.height(14.dp))
+
+            OutlinedButton(
+                onClick = { showLogoutDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp),
+                shape = RoundedCornerShape(14.dp),
+                border = BorderStroke(1.dp, CosmicDanger.copy(alpha = 0.5f)),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = CosmicDanger)
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = stringResource(R.string.action_logout),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = CosmicDanger
+                )
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
             PankajYadavFooter()
         }
     }
 
-    if (showGuideDialog) {
+    if (showLogoutDialog) {
         AlertDialog(
-            onDismissRequest = { showGuideDialog = false },
-            title = {
-                Text(
-                    text = "Restricted Settings Unlock Guide",
-                    fontWeight = FontWeight.Bold,
-                    color = CosmicTextPrimary
-                )
-            },
-            text = {
-                Column {
-                    Text(
-                        text = "Because this APK is installed directly, Android 13+ prevents sensitive permissions until unlocked:",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = CosmicTextSecondary
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = CosmicSurface,
-                        border = BorderStroke(1.dp, CosmicCardBorder)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(text = "1. Tap 'Open App Info' below.", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CosmicTextPrimary)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = "2. Tap the 3 dots (⋮) in the top-right corner.", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CosmicTextPrimary)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = "3. Select 'Allow restricted settings' & enter device PIN.", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CosmicTextPrimary)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = "4. Return to Limit Crosses & tap 'Open Usage Settings'.", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CosmicSuccess)
-                        }
-                    }
-                }
-            },
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(stringResource(R.string.dialog_sign_out_title), fontWeight = FontWeight.Bold, color = CosmicTextPrimary) },
+            text = { Text(stringResource(R.string.dialog_sign_out_message), color = CosmicTextSecondary) },
             confirmButton = {
                 Button(
                     onClick = {
-                        showGuideDialog = false
-                        openAppDetailsSettings(context)
+                        showLogoutDialog = false
+                        authViewModel?.logout { onLoggedOut() } ?: onLoggedOut()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = CosmicSecondary)
+                    colors = ButtonDefaults.buttonColors(containerColor = CosmicDanger)
                 ) {
-                    Text("Open App Info", color = CosmicBackground, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.action_logout), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showGuideDialog = false }) {
-                    Text("Close", color = CosmicTextSecondary)
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(stringResource(R.string.action_cancel), color = CosmicTextSecondary)
                 }
             },
             containerColor = CosmicCard,
             shape = RoundedCornerShape(16.dp)
+        )
+    }
+
+    if (showGuideDialog) {
+        DeviceSetupGuideDialog(
+            onDismiss = { showGuideDialog = false },
+            onOpenAppInfo = {
+                showGuideDialog = false
+                openAppDetailsSettings(context)
+            },
+            onOpenUsageSettings = {
+                showGuideDialog = false
+                openUsageSettings(context)
+            }
         )
     }
 }
@@ -335,6 +381,7 @@ private fun PermissionCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     isGranted: Boolean,
     buttonText: String,
+    isOptional: Boolean = false,
     onAction: () -> Unit
 ) {
     Surface(
@@ -384,6 +431,15 @@ private fun PermissionCard(
                                 color = CosmicSuccess,
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold
+                            )
+                        } else if (isOptional) {
+                            Icon(Icons.Default.Info, contentDescription = null, tint = CosmicSecondary, modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.perm_optional_inactive),
+                                color = CosmicSecondary,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium
                             )
                         } else {
                             Icon(Icons.Default.Warning, contentDescription = null, tint = CosmicWarning, modifier = Modifier.size(14.dp))

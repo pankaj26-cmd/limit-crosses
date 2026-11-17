@@ -30,6 +30,15 @@ class AuthRepositoryImpl(
 
     override suspend fun getActiveUser(): UserAccount? = currentUserFlow.value
 
+    override suspend fun refreshCurrentUser(): UserAccount? {
+        val savedId = localDataStorage.getCurrentUserId() ?: return null
+        val user = localDataStorage.getUserById(savedId)
+        if (user != null && user.status != UserStatus.DELETED) {
+            currentUserFlow.value = user
+        }
+        return user
+    }
+
     override suspend fun login(email: String, passwordPlain: String): Result<UserAccount> {
         val result = backendClient.login(email, passwordPlain)
         if (result.isSuccess) {
@@ -93,6 +102,21 @@ class AuthRepositoryImpl(
             currentUserFlow.value = null
         }
         return result
+    }
+
+    override suspend fun requestAccountDeletion(reason: String): Result<AccountDeletionRequest> {
+        val current = currentUserFlow.value ?: return Result.failure(IllegalStateException("No logged in user"))
+        return backendClient.requestAccountDeletion(current.id, reason)
+    }
+
+    override suspend fun cancelAccountDeletion(): Result<Unit> {
+        val current = currentUserFlow.value ?: return Result.failure(IllegalStateException("No logged in user"))
+        return backendClient.cancelAccountDeletion(current.id)
+    }
+
+    override suspend fun getPendingDeletionRequest(): Result<AccountDeletionRequest?> {
+        val current = currentUserFlow.value ?: return Result.success(null)
+        return backendClient.getPendingDeletionRequest(current.id)
     }
 }
 

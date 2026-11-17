@@ -44,7 +44,7 @@
     <string name="auth_name_label">पूरा नाम</string>
     <string name="auth_name_hint">आपका नाम</string>
     <string name="auth_invite_code_label">निमंत्रण कोड</string>
-    <string name="auth_invite_code_hint">उदा. LC-INVITE-8492</string>
+    <string name="auth_invite_code_hint">उदा. LC-7M4P-8K9N-2Q5W</string>
     <string name="auth_bootstrap_key_label">मास्टर बूटस्ट्रैप सीक्रेट</string>
     <string name="auth_bootstrap_key_hint">तैनाती सीक्रेट दर्ज करें</string>
     <string name="auth_optional_handles_title">वैकल्पिक सोशल हैंडल (केवल पहचान हेतु)</string>
@@ -79,6 +79,7 @@
     <string name="perm_vpn_btn">स्थानीय VPN कॉन्फ़िगर करें</string>
     <string name="perm_granted">अनुमति प्राप्त</string>
     <string name="perm_missing">आवश्यक / शेष</string>
+    <string name="perm_optional_inactive">वैकल्पिक / निष्क्रिय</string>
     <string name="perm_btn_continue_to_limit">सीमा सेटअप पर जाएं</string>
 
     <!-- Limit Setup & Locking -->
@@ -233,5 +234,8 @@
     <!-- Sign Out Dialog -->
     <string name="dialog_sign_out_title">साइन आउट करें</string>
     <string name="dialog_sign_out_message">क्या आप वाकई लिमिट क्रॉसेस से साइन आउट करना चाहते हैं?</string>
+
+    <!-- Accessibility Service -->
+    <string name="accessibility_service_description">दैनिक समय सीमा समाप्त होने के बाद फेसबुक, इंस्टाग्राम या स्नैपचैट को ब्लॉक करने के लिए एक्सेसिबिलिटी सेवा का उपयोग किया जाता है।</string>
 </resources>
 

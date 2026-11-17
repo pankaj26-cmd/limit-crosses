@@ -47,7 +47,7 @@ class ExtensionViewModel(
             return
         }
 
-        val clamped = minutes.coerceIn(1, 30)
+        val clamped = minutes.coerceIn(1, 20)
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
         viewModelScope.launch {

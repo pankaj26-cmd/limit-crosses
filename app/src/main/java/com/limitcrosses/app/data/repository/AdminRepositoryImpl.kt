@@ -25,6 +25,23 @@ class AdminRepositoryImpl(
         return backendClient.listPendingExtensions()
     }
 
+    override suspend fun listAllExtensions(): Result<List<ExtensionRequest>> {
+        return backendClient.listAllExtensions()
+    }
+
+    override suspend fun listPendingDeletionRequests(): Result<List<AccountDeletionRequest>> {
+        return backendClient.listPendingDeletionRequests()
+    }
+
+    override suspend fun reviewDeletionRequest(
+        adminId: String,
+        requestId: String,
+        approved: Boolean,
+        notes: String?
+    ): Result<Unit> {
+        return backendClient.adminReviewDeletionRequest(adminId, requestId, approved, notes)
+    }
+
     override suspend fun reviewExtension(
         adminId: String,
         requestId: String,
@@ -50,6 +67,14 @@ class AdminRepositoryImpl(
 
     override suspend fun listAllInvites(): Result<List<InviteCode>> {
         return backendClient.listAllInvites()
+    }
+
+    override suspend fun syncRemoteRegistrations(): Result<Int> {
+        return backendClient.syncRemoteRegistrations()
+    }
+
+    override suspend fun importOfflineRegistration(syncCode: String): Result<UserAccount> {
+        return backendClient.importOfflineRegistration(syncCode)
     }
 }
 

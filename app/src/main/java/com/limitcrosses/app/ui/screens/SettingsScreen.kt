@@ -11,11 +11,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.limitcrosses.app.R
+import com.limitcrosses.app.core.model.UserRole
+import com.limitcrosses.app.ui.components.DeviceSetupGuideDialog
 import com.limitcrosses.app.ui.theme.*
 import com.limitcrosses.app.ui.viewmodel.AuthViewModel
 import com.limitcrosses.app.ui.viewmodel.SettingsViewModel
@@ -32,6 +35,7 @@ fun SettingsScreen(
 ) {
     val uiState by settingsViewModel.uiState.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
+    var showDeviceGuideDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = CosmicBackground,
@@ -100,6 +104,31 @@ fun SettingsScreen(
                         handles.instagram?.let { Text(text = "IG: $it", style = MaterialTheme.typography.bodyMedium, color = CosmicTextSecondary) }
                         handles.snapchat?.let { Text(text = "SC: $it", style = MaterialTheme.typography.bodyMedium, color = CosmicTextSecondary) }
                     }
+
+                    if (uiState.currentUser?.role == UserRole.USER) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
+                        OutlinedButton(
+                            onClick = {
+                                val user = uiState.currentUser ?: return@OutlinedButton
+                                val syncCode = com.limitcrosses.app.data.remote.CloudSyncRelayHelper.generateOfflineSyncCode(
+                                    user = user,
+                                    inviteCode = user.registeredViaInviteCode ?: "LC-UNIVERSAL",
+                                    limitMinutes = 30
+                                )
+                                clipboard.setText(androidx.compose.ui.text.AnnotatedString(syncCode))
+                                android.widget.Toast.makeText(context, "Registration code copied! Share with your Admin.", android.widget.Toast.LENGTH_LONG).show()
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CosmicSecondary),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CosmicSecondary),
+                            modifier = Modifier.fillMaxWidth().height(38.dp)
+                        ) {
+                            Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Share Registration with Admin", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
             }
 
@@ -131,7 +160,7 @@ fun SettingsScreen(
                         label = { Text(stringResource(R.string.settings_lang_en)) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = CosmicPrimary,
-                            selectedLabelColor = CosmicTextPrimary,
+                            selectedLabelColor = Color.White,
                             containerColor = CosmicSurface,
                             labelColor = CosmicTextSecondary
                         )
@@ -142,7 +171,65 @@ fun SettingsScreen(
                         label = { Text(stringResource(R.string.settings_lang_hi)) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = CosmicPrimary,
-                            selectedLabelColor = CosmicTextPrimary,
+                            selectedLabelColor = Color.White,
+                            containerColor = CosmicSurface,
+                            labelColor = CosmicTextSecondary
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Theme & Cosmos Appearance Selection
+            Text(
+                text = stringResource(R.string.settings_section_theme),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = CosmicTextPrimary
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                color = CosmicCard,
+                border = androidx.compose.foundation.BorderStroke(1.dp, CosmicCardBorder)
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChip(
+                        selected = uiState.currentThemeMode == "SYSTEM",
+                        onClick = { settingsViewModel.setThemeMode("SYSTEM") },
+                        label = { Text("📱 " + stringResource(R.string.settings_theme_system)) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = CosmicPrimary,
+                            selectedLabelColor = Color.White,
+                            containerColor = CosmicSurface,
+                            labelColor = CosmicTextSecondary
+                        )
+                    )
+                    FilterChip(
+                        selected = uiState.currentThemeMode == "DARK",
+                        onClick = { settingsViewModel.setThemeMode("DARK") },
+                        label = { Text("🌙 " + stringResource(R.string.settings_theme_dark)) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = CosmicPrimary,
+                            selectedLabelColor = Color.White,
+                            containerColor = CosmicSurface,
+                            labelColor = CosmicTextSecondary
+                        )
+                    )
+                    FilterChip(
+                        selected = uiState.currentThemeMode == "LIGHT",
+                        onClick = { settingsViewModel.setThemeMode("LIGHT") },
+                        label = { Text("☀️ " + stringResource(R.string.settings_theme_light)) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = CosmicPrimary,
+                            selectedLabelColor = Color.White,
                             containerColor = CosmicSurface,
                             labelColor = CosmicTextSecondary
                         )
@@ -301,10 +388,27 @@ fun SettingsScreen(
                             },
                             modifier = Modifier.weight(1f).height(40.dp),
                             shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = CosmicWarning.copy(alpha = 0.85f))
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CosmicWarning.copy(alpha = 0.85f),
+                                contentColor = Color.Black
+                            )
                         ) {
-                            Text("Unlock in App Info", color = CosmicBackground, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            Text("Unlock in App Info", color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    OutlinedButton(
+                        onClick = { showDeviceGuideDialog = true },
+                        modifier = Modifier.fillMaxWidth().height(40.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, CosmicCardBorder),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = CosmicTextPrimary)
+                    ) {
+                        Icon(Icons.Default.HelpOutline, contentDescription = null, tint = CosmicWarning, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Device Setup Guide (Xiaomi, Vivo, OPPO...)", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
@@ -326,17 +430,59 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Delete Account Button
-            Button(
-                onClick = { settingsViewModel.showDeleteConfirmation(true) },
-                modifier = Modifier.fillMaxWidth().height(48.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = CosmicDanger.copy(alpha = 0.2f)),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CosmicDanger)
-            ) {
-                Icon(Icons.Default.DeleteForever, contentDescription = null, tint = CosmicDanger)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = stringResource(R.string.action_delete_account), color = CosmicDanger, fontWeight = FontWeight.Bold)
+            // Account Deletion Workflow (Admin Managed)
+            if (uiState.pendingDeletionRequest != null) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    color = CosmicWarning.copy(alpha = 0.15f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CosmicWarning)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("⏳", fontSize = 20.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Account Deletion Requested",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = CosmicTextPrimary
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Status: Pending Administrator Approval.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = CosmicWarning
+                        )
+                        Text(
+                            text = "Reason: \"${uiState.pendingDeletionRequest?.reason}\"",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = CosmicTextSecondary
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        OutlinedButton(
+                            onClick = { settingsViewModel.cancelDeletionRequest() },
+                            modifier = Modifier.fillMaxWidth().height(36.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CosmicTextSecondary)
+                        ) {
+                            Text("Withdraw Request", fontSize = 12.sp, color = CosmicTextSecondary)
+                        }
+                    }
+                }
+            } else {
+                Button(
+                    onClick = { settingsViewModel.showDeleteConfirmation(true) },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = CosmicDanger.copy(alpha = 0.2f)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CosmicDanger)
+                ) {
+                    Icon(Icons.Default.DeleteForever, contentDescription = null, tint = CosmicDanger)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Request Account Deletion", color = CosmicDanger, fontWeight = FontWeight.Bold)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -347,28 +493,75 @@ fun SettingsScreen(
         }
     }
 
-    // Account Deletion Confirmation Dialog
+    // Account Deletion Request Dialog (Admin Managed)
     if (uiState.isDeleteConfirmationVisible) {
+        var deletionReason by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { settingsViewModel.showDeleteConfirmation(false) },
-            title = { Text(stringResource(R.string.settings_confirm_delete_title)) },
-            text = { Text(stringResource(R.string.settings_confirm_delete_body)) },
+            containerColor = CosmicCard,
+            title = {
+                Text("Request Account Deletion", color = CosmicTextPrimary, fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "To preserve discipline and prevent bypassing daily limits, account deletion is managed by your Administrator. Please provide a reason for this request:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CosmicTextSecondary
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = deletionReason,
+                        onValueChange = { deletionReason = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Reason for Deletion", color = CosmicTextSecondary) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = CosmicTextPrimary,
+                            unfocusedTextColor = CosmicTextPrimary,
+                            focusedBorderColor = CosmicPrimary,
+                            unfocusedBorderColor = CosmicCardBorder
+                        ),
+                        singleLine = false,
+                        maxLines = 3
+                    )
+                }
+            },
             confirmButton = {
                 Button(
                     onClick = {
-                        settingsViewModel.confirmDeleteAccount {
-                            onAccountDeleted()
-                        }
+                        settingsViewModel.submitAccountDeletionRequest(deletionReason)
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = CosmicDanger)
+                    enabled = deletionReason.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(containerColor = CosmicPrimary)
                 ) {
-                    Text(stringResource(R.string.action_confirm))
+                    Text("Submit to Admin", color = Color.White)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { settingsViewModel.showDeleteConfirmation(false) }) {
-                    Text(stringResource(R.string.action_cancel))
+                    Text(stringResource(R.string.action_cancel), color = CosmicTextSecondary)
                 }
+            }
+        )
+    }
+
+    if (showDeviceGuideDialog) {
+        DeviceSetupGuideDialog(
+            onDismiss = { showDeviceGuideDialog = false },
+            onOpenAppInfo = {
+                showDeviceGuideDialog = false
+                val intent = android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = android.net.Uri.parse("package:" + context.packageName)
+                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(intent)
+            },
+            onOpenUsageSettings = {
+                showDeviceGuideDialog = false
+                val intent = android.content.Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(intent)
             }
         )
     }

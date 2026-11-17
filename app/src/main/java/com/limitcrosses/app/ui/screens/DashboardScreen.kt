@@ -56,9 +56,22 @@ fun DashboardScreen(
     val usageReport by dashboardViewModel.usageState.collectAsState()
     val authState by authViewModel.uiState.collectAsState()
     val resetTimerStr by dashboardViewModel.resetTimeFormatted.collectAsState()
+    val activeBonusMinutes by dashboardViewModel.activeBonusMinutes.collectAsState()
+    val pendingRequestMinutes by dashboardViewModel.pendingRequestMinutes.collectAsState()
 
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showRestrictedSettingsGuide by remember { mutableStateOf(false) }
+
+    val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                dashboardViewModel.manualRefresh()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     // Trigger LimitReachedScreen if limit is exhausted
     LaunchedEffect(usageReport?.isLimitReached) {
@@ -215,7 +228,77 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.height(14.dp))
             }
 
-            // PERMISSION / RESTRICTED SETTINGS ALERT CARD (Bug 1 Fix)
+            // Administrator Granted Time Banner (Requirement 10)
+            if (activeBonusMinutes > 0) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    color = CosmicSuccess.copy(alpha = 0.15f),
+                    border = BorderStroke(1.dp, CosmicSuccess)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = CosmicSuccess,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "+$activeBonusMinutes minutes granted by your Administrator",
+                                fontWeight = FontWeight.Bold,
+                                color = CosmicTextPrimary,
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = "This extra time has been added to your daily allowance by your Administrator.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = CosmicTextSecondary
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Pending Extension Banner
+            if (pendingRequestMinutes != null) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    color = CosmicWarning.copy(alpha = 0.15f),
+                    border = BorderStroke(1.dp, CosmicWarning)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.HourglassTop,
+                            contentDescription = null,
+                            tint = CosmicWarning,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Extension Request Pending: +$pendingRequestMinutes min",
+                                fontWeight = FontWeight.Bold,
+                                color = CosmicTextPrimary,
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = "Awaiting review by your Administrator. You will be credited once approved.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = CosmicTextSecondary
+                            )
+                        }
+                    }
+                }
+            }
             if (usageReport?.trackingActive != true) {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -568,13 +651,13 @@ fun DashboardScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = CosmicPrimary),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
             ) {
-                Icon(Icons.Default.Extension, contentDescription = null, tint = CosmicTextPrimary)
+                Icon(Icons.Default.Extension, contentDescription = null, tint = Color.White)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.dash_btn_puzzle_extension),
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    color = CosmicTextPrimary
+                    color = Color.White
                 )
             }
 

@@ -11,6 +11,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -87,6 +89,8 @@ fun InviteAcceptanceScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            val clipboard = LocalClipboardManager.current
+
             OutlinedTextField(
                 value = inviteCodeInput,
                 onValueChange = {
@@ -95,6 +99,17 @@ fun InviteAcceptanceScreen(
                 },
                 label = { Text(stringResource(R.string.auth_invite_code_label)) },
                 placeholder = { Text(stringResource(R.string.auth_invite_code_hint)) },
+                trailingIcon = {
+                    TextButton(onClick = {
+                        val clipText = clipboard.getText()?.text?.trim()?.uppercase()
+                        if (!clipText.isNullOrEmpty()) {
+                            inviteCodeInput = clipText
+                            viewModel.clearMessages()
+                        }
+                    }) {
+                        Text("PASTE", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = CosmicSecondary)
+                    }
+                },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -132,13 +147,13 @@ fun InviteAcceptanceScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = CosmicPrimary)
             ) {
                 if (uiState.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = CosmicTextPrimary)
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                 } else {
                     Text(
                         text = stringResource(R.string.auth_btn_validate_invite),
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
-                        color = CosmicTextPrimary
+                        color = Color.White
                     )
                 }
             }

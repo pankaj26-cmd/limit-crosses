@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRepository {
     fun getCurrentUserFlow(): Flow<UserAccount?>
     suspend fun getActiveUser(): UserAccount?
+    suspend fun refreshCurrentUser(): UserAccount?
     suspend fun login(email: String, passwordPlain: String): Result<UserAccount>
     suspend fun bootstrapAdmin(fullName: String, email: String, passwordPlain: String, secretKey: String): Result<UserAccount>
     suspend fun validateInvite(code: String): Result<InviteCode>
@@ -19,6 +20,9 @@ interface AuthRepository {
     suspend fun logout(): Result<Unit>
     suspend fun resetPassword(email: String): Result<Unit>
     suspend fun deleteAccount(): Result<Unit>
+    suspend fun requestAccountDeletion(reason: String): Result<AccountDeletionRequest>
+    suspend fun cancelAccountDeletion(): Result<Unit>
+    suspend fun getPendingDeletionRequest(): Result<AccountDeletionRequest?>
 }
 
 interface UsageRepository {
@@ -27,6 +31,7 @@ interface UsageRepository {
     suspend fun isTrackingActive(): Boolean
     suspend fun getResetTimeMillis(): Long
     fun getDailyHistory(): List<DailyHistoryItem>
+    fun setSimulatedLimitReached(reached: Boolean)
 }
 
 data class DailyHistoryItem(
@@ -53,6 +58,7 @@ interface AdminRepository {
     suspend fun generateInvite(adminId: String, limitMinutes: Int, validDays: Int, notes: String): Result<InviteCode>
     suspend fun listManagedUsers(): Result<List<UserAccount>>
     suspend fun listPendingExtensions(): Result<List<ExtensionRequest>>
+    suspend fun listAllExtensions(): Result<List<ExtensionRequest>>
     suspend fun reviewExtension(
         adminId: String,
         requestId: String,
@@ -63,6 +69,10 @@ interface AdminRepository {
     suspend fun modifyUserLimit(adminId: String, targetUserId: String, newMinutes: Int, reason: String): Result<DailyLimitConfig>
     suspend fun listAuditLogs(): Result<List<AuditLogEntry>>
     suspend fun listAllInvites(): Result<List<InviteCode>>
+    suspend fun syncRemoteRegistrations(): Result<Int>
+    suspend fun importOfflineRegistration(syncCode: String): Result<UserAccount>
+    suspend fun listPendingDeletionRequests(): Result<List<AccountDeletionRequest>>
+    suspend fun reviewDeletionRequest(adminId: String, requestId: String, approved: Boolean, notes: String?): Result<Unit>
 }
 
 interface CosmosRepository {

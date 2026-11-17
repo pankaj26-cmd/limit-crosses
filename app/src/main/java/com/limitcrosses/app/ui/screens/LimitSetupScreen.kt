@@ -5,34 +5,50 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.limitcrosses.app.R
+import com.limitcrosses.app.ui.components.PankajYadavFooter
 import com.limitcrosses.app.ui.theme.*
+import com.limitcrosses.app.ui.viewmodel.AuthViewModel
 import com.limitcrosses.app.ui.viewmodel.LimitSetupViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LimitSetupScreen(
     viewModel: LimitSetupViewModel,
-    onConfirmed: () -> Unit
+    authViewModel: AuthViewModel? = null,
+    onConfirmed: () -> Unit,
+    onLoggedOut: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = CosmicBackground,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.limit_setup_title), color = CosmicTextPrimary) },
+                actions = {
+                    IconButton(onClick = { showLogoutDialog = true }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = stringResource(R.string.action_logout),
+                            tint = CosmicDanger
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = CosmicBackground)
             )
         }
@@ -211,7 +227,7 @@ fun LimitSetupScreen(
                         text = stringResource(R.string.action_continue),
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
-                        color = CosmicTextPrimary
+                        color = Color.White
                     )
                 }
             } else {
@@ -229,20 +245,48 @@ fun LimitSetupScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = CosmicPrimary)
                 ) {
                     if (uiState.isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = CosmicTextPrimary)
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                     } else {
                         Text(
                             text = stringResource(R.string.limit_btn_confirm_lock),
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
-                            color = CosmicTextPrimary
+                            color = Color.White
                         )
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+            PankajYadavFooter()
+            Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(stringResource(R.string.dialog_sign_out_title), fontWeight = FontWeight.Bold, color = CosmicTextPrimary) },
+            text = { Text(stringResource(R.string.dialog_sign_out_message), color = CosmicTextSecondary) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showLogoutDialog = false
+                        authViewModel?.logout { onLoggedOut() } ?: onLoggedOut()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CosmicDanger)
+                ) {
+                    Text(stringResource(R.string.action_logout), color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(stringResource(R.string.action_cancel), color = CosmicTextSecondary)
+                }
+            },
+            containerColor = CosmicCard,
+            shape = RoundedCornerShape(16.dp)
+        )
     }
 }
 

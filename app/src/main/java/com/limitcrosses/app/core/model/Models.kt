@@ -25,6 +25,7 @@ data class UserAccount(
     val role: UserRole,
     val status: UserStatus,
     val socialHandles: SocialHandles = SocialHandles(),
+    val registeredViaInviteCode: String? = null,
     val createdAtEpochMs: Long,
     val lastActiveEpochMs: Long = createdAtEpochMs
 )
@@ -37,6 +38,9 @@ data class InviteCode(
     val expiresAtEpochMs: Long,
     val isRedeemed: Boolean = false,
     val redeemedByUserId: String? = null,
+    val redeemedByUserName: String? = null,
+    val redeemedByUserEmail: String? = null,
+    val redeemedAtEpochMs: Long? = null,
     val notes: String = ""
 )
 
@@ -86,7 +90,10 @@ data class ExtensionRequest(
     val adminNotes: String? = null,
     val requestedAtEpochMs: Long,
     val respondedAtEpochMs: Long? = null,
-    val expiresAtEpochMs: Long? = null
+    val expiresAtEpochMs: Long? = null,
+    val baselineUsageSecondsAtApproval: Long = 0L,
+    val usageSecondsAtRequest: Long = 0L,
+    val inviteCode: String? = null
 )
 
 enum class AuditActionType {
@@ -100,9 +107,30 @@ enum class AuditActionType {
     PUZZLES_COMPLETED,
     EXTENSION_REQUESTED,
     EXTENSION_DECIDED,
+    ACCOUNT_DELETION_REQUESTED,
+    ACCOUNT_DELETION_APPROVED,
+    ACCOUNT_DELETION_REJECTED,
     ACCOUNT_DELETED,
     PERMISSION_CHANGED
 }
+
+enum class DeletionRequestStatus {
+    PENDING,
+    APPROVED,
+    REJECTED
+}
+
+data class AccountDeletionRequest(
+    val id: String,
+    val userId: String,
+    val userName: String,
+    val userEmail: String,
+    val reason: String,
+    val status: DeletionRequestStatus = DeletionRequestStatus.PENDING,
+    val requestedAtEpochMs: Long,
+    val processedAtEpochMs: Long? = null,
+    val adminNotes: String? = null
+)
 
 data class AuditLogEntry(
     val id: String,
@@ -153,6 +181,8 @@ data class CosmosTopic(
 data class PermissionState(
     val hasUsageStats: Boolean = false,
     val hasNotifications: Boolean = false,
-    val hasVpn: Boolean = false
+    val hasVpn: Boolean = false,
+    val hasOverlay: Boolean = false,
+    val hasAccessibility: Boolean = false
 )
 

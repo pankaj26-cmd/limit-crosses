@@ -50,5 +50,70 @@ class LimitCalculationTest {
         val clamped2 = attemptedLimit2.coerceIn(0, 45)
         assertEquals(0, clamped2)
     }
+
+    @Test
+    fun testUnpairedBackgroundStopEventsDoNotCreditTime() {
+        val todayMidnight = 1700000000000L
+        val now = todayMidnight + (11 * 3600 + 46 * 60) * 1000L // 11:46 AM today
+
+        val activeSessionStarts = mutableMapOf<String, Long>()
+        var usageSeconds = 0L
+
+        // Simulate 5 background STOP events firing for Snapchat without an ACTIVITY_RESUMED event
+        val stopTimestamps = listOf(
+            todayMidnight + 1800000L,
+            todayMidnight + 7200000L,
+            todayMidnight + 14400000L,
+            todayMidnight + 28800000L,
+            now
+        )
+
+        for (stopTs in stopTimestamps) {
+            val sessionStart = activeSessionStarts.remove("com.snapchat.android")
+            if (sessionStart != null && stopTs > sessionStart) {
+                usageSeconds += (stopTs - sessionStart) / 1000L
+            }
+        }
+
+        // Must remain strictly 0 seconds because Snapchat was never actually resumed by the user
+        assertEquals(0L, usageSeconds)
+    }
+
+    @Test
+    fun testPairedResumePauseCreditsExactDuration() {
+        val todayMidnight = 1700000000000L
+        val activeSessionStarts = mutableMapOf<String, Long>()
+        var usageSeconds = 0L
+
+        // User opens Instagram at 10:00:00 AM
+        val resumeTs = todayMidnight + (10 * 3600 * 1000L)
+        activeSessionStarts["com.instagram.android"] = resumeTs
+
+        // User leaves Instagram at 10:05:30 AM (5m 30s = 330s)
+        val pauseTs = resumeTs + (330 * 1000L)
+        val sessionStart = activeSessionStarts.remove("com.instagram.android")
+        assertNotNull(sessionStart)
+        if (sessionStart != null && pauseTs > sessionStart) {
+            usageSeconds += (pauseTs - sessionStart) / 1000L
+        }
+
+        assertEquals(330L, usageSeconds)
+    }
+
+    @Test
+    fun testPhysicalElapsedCeilingClamp() {
+        val todayMidnight = 1700000000000L
+        // 11:46 AM elapsed time = 706 minutes = 42,360 seconds
+        val now = todayMidnight + (11 * 3600 + 46 * 60) * 1000L
+        val maxPossibleSecondsToday = ((now - todayMidnight) / 1000L).coerceAtLeast(0L)
+
+        // Corrupted or bogus 3712 minutes = 222,720 seconds
+        val bogusSeconds = 3712 * 60L
+        val clampedUsageSeconds = bogusSeconds.coerceIn(0L, maxPossibleSecondsToday)
+
+        // Clamped to 42,360 seconds (706 min), physically impossible to reach 3712 min
+        assertEquals(maxPossibleSecondsToday, clampedUsageSeconds)
+        assertTrue(clampedUsageSeconds <= maxPossibleSecondsToday)
+    }
 }
 

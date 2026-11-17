@@ -1,0 +1,109 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Cosmic Orbital Ring (Rotated Ellipse) -->
+    <path
+        android:pathData="M32,46 C42,40 66,40 76,46 C84,51 84,57 76,62 C66,68 42,68 32,62 C24,57 24,51 32,46 Z"
+        android:strokeWidth="2.5"
+        android:strokeAlpha="0.65">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="40"
+                android:endX="84"
+                android:endY="68"
+                android:startColor="#00E5FF"
+                android:endColor="#7C4DFF" />
+        </aapt:attr>
+    </path>
+
+    <!-- Hourglass Upper & Lower Shell Outer Frame -->
+    <path
+        android:pathData="M38,32 L70,32 L58,52 L70,76 L38,76 L50,52 Z"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:type="linear"
+                android:startX="38"
+                android:startY="32"
+                android:endX="70"
+                android:endY="76"
+                android:startColor="#00E5FF"
+                android:endColor="#B388FF" />
+        </aapt:attr>
+    </path>
+
+    <!-- Top Cap Bar -->
+    <path
+        android:pathData="M34,30 L74,30"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeColor="#00E5FF" />
+
+    <!-- Bottom Cap Bar -->
+    <path
+        android:pathData="M34,78 L74,78"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeColor="#7C4DFF" />
+
+    <!-- Upper Chamber: Starlight Sand -->
+    <path
+        android:pathData="M42,36 L66,36 L54,51 Z"
+        android:fillAlpha="0.85">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="54"
+                android:startY="36"
+                android:endX="54"
+                android:endY="51"
+                android:startColor="#00E5FF"
+                android:endColor="#7C4DFF" />
+        </aapt:attr>
+    </path>
+
+    <!-- Lower Chamber: Accumulated Starlight Energy -->
+    <path
+        android:pathData="M54,57 L64,72 L44,72 Z"
+        android:fillAlpha="0.95">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="54"
+                android:startY="57"
+                android:endX="54"
+                android:endY="72"
+                android:startColor="#7C4DFF"
+                android:endColor="#FF5252" />
+        </aapt:attr>
+    </path>
+
+    <!-- Flowing Stream of Starlight -->
+    <path
+        android:pathData="M54,50 L54,58"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFFFFF" />
+
+    <!-- Central Glowing Stellar Core Star / Sparkle -->
+    <path
+        android:pathData="M54,49 L55.5,53.5 L60,54 L55.5,54.5 L54,59 L52.5,54.5 L48,54 L52.5,53.5 Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Limit Cross Accent Notches (Cardinal Marks) -->
+    <path
+        android:pathData="M54,23 L54,27 M54,81 L54,85 M27,54 L31,54 M77,54 L81,54"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeColor="#00E5FF"
+        android:strokeAlpha="0.8" />
+</vector>
+

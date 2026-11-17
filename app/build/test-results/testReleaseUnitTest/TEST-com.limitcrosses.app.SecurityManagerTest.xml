@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.limitcrosses.app.SecurityManagerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-12T14:51:01" hostname="DESKTOP-B3AJPVJ" time="0.023">
-  <properties/>
-  <testcase name="testInviteCodeGenerationFormat" classname="com.limitcrosses.app.SecurityManagerTest" time="0.011"/>
-  <testcase name="testAdminBootstrapSecurity" classname="com.limitcrosses.app.SecurityManagerTest" time="0.002"/>
-  <testcase name="testPasswordHashingAndVerification" classname="com.limitcrosses.app.SecurityManagerTest" time="0.01"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

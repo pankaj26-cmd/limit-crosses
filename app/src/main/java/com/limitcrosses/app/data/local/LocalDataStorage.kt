@@ -4,6 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.limitcrosses.app.core.model.*
 import com.limitcrosses.app.core.security.SecurityManager
+import com.limitcrosses.app.data.remote.RemoteUsageTelemetry
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -22,12 +28,15 @@ class LocalDataStorage(context: Context) {
         private const val KEY_INVITES_JSON = "invites_json"
         private const val KEY_LIMITS_JSON = "limits_json"
         private const val KEY_EXTENSIONS_JSON = "extensions_json"
+        private const val KEY_DELETION_REQUESTS_JSON = "deletion_requests_json"
         private const val KEY_AUDIT_LOGS_JSON = "audit_logs_json"
         private const val KEY_USAGE_HISTORY_JSON = "usage_history_json"
         private const val KEY_PUZZLE_ELIGIBLE = "puzzle_eligible_"
         private const val KEY_CLOUD_SYNC_ENABLED = "cloud_sync_enabled"
         private const val KEY_CLOUD_ENDPOINT = "cloud_endpoint"
         private const val KEY_APP_LANGUAGE = "app_language"
+        private const val KEY_APP_THEME = "app_theme_mode" // "SYSTEM", "DARK", "LIGHT"
+        private const val KEY_USER_USAGE_TELEMETRY_JSON = "user_usage_telemetry_json"
     }
 
     init {
@@ -53,12 +62,15 @@ class LocalDataStorage(context: Context) {
             passwords[user.email.lowercase()] = SecurityManager.hashPassword(passwordPlain)
             saveAllPasswords(passwords)
         }
+        notifyDataChanged()
     }
 
     fun getUserById(id: String): UserAccount? = getAllUsers()[id]
 
-    fun getUserByEmail(email: String): UserAccount? =
-        getAllUsers().values.find { it.email.equals(email.trim(), ignoreCase = true) }
+    fun getUserByEmail(email: String): UserAccount? {
+        val found = getAllUsers().values.find { it.email.equals(email.trim(), ignoreCase = true) } ?: return null
+        return getUserById(found.id)
+    }
 
     fun verifyCredentials(email: String, passwordPlain: String): UserAccount? {
         val user = getUserByEmail(email) ?: return null
@@ -87,6 +99,7 @@ class LocalDataStorage(context: Context) {
                         instagram = handlesObj?.optString("instagram")?.takeIf { it.isNotEmpty() },
                         snapchat = handlesObj?.optString("snapchat")?.takeIf { it.isNotEmpty() }
                     ),
+                    registeredViaInviteCode = obj.optString("registeredViaInviteCode").takeIf { it.isNotEmpty() },
                     createdAtEpochMs = obj.getLong("createdAtEpochMs"),
                     lastActiveEpochMs = obj.optLong("lastActiveEpochMs", obj.getLong("createdAtEpochMs"))
                 )
@@ -104,6 +117,7 @@ class LocalDataStorage(context: Context) {
             obj.put("fullName", user.fullName)
             obj.put("role", user.role.name)
             obj.put("status", user.status.name)
+            obj.put("registeredViaInviteCode", user.registeredViaInviteCode ?: "")
             obj.put("createdAtEpochMs", user.createdAtEpochMs)
             obj.put("lastActiveEpochMs", user.lastActiveEpochMs)
             val handles = JSONObject()
@@ -141,6 +155,7 @@ class LocalDataStorage(context: Context) {
         val invites = getAllInvites().toMutableMap()
         invites[invite.code] = invite
         saveAllInvites(invites)
+        notifyDataChanged()
     }
 
     fun getInviteByCode(code: String): InviteCode? = getAllInvites()[code.trim().uppercase()]
@@ -162,6 +177,9 @@ class LocalDataStorage(context: Context) {
                     expiresAtEpochMs = obj.getLong("expiresAtEpochMs"),
                     isRedeemed = obj.getBoolean("isRedeemed"),
                     redeemedByUserId = obj.optString("redeemedByUserId").takeIf { it.isNotEmpty() },
+                    redeemedByUserName = obj.optString("redeemedByUserName").takeIf { it.isNotEmpty() },
+                    redeemedByUserEmail = obj.optString("redeemedByUserEmail").takeIf { it.isNotEmpty() },
+                    redeemedAtEpochMs = obj.optLong("redeemedAtEpochMs").takeIf { it > 0 },
                     notes = obj.optString("notes", "")
                 )
             }
@@ -180,6 +198,9 @@ class LocalDataStorage(context: Context) {
             obj.put("expiresAtEpochMs", invite.expiresAtEpochMs)
             obj.put("isRedeemed", invite.isRedeemed)
             obj.put("redeemedByUserId", invite.redeemedByUserId ?: "")
+            obj.put("redeemedByUserName", invite.redeemedByUserName ?: "")
+            obj.put("redeemedByUserEmail", invite.redeemedByUserEmail ?: "")
+            obj.put("redeemedAtEpochMs", invite.redeemedAtEpochMs ?: 0L)
             obj.put("notes", invite.notes)
             root.put(code, obj)
         }
@@ -191,6 +212,15 @@ class LocalDataStorage(context: Context) {
         val limits = getAllLimitConfigs().toMutableMap()
         limits[config.userId] = config
         saveAllLimitConfigs(limits)
+
+        // If the limit configuration is locked, immediately mark user account as ACTIVE
+        if (config.isLocked) {
+            val user = getAllUsers()[config.userId]
+            if (user != null && user.status == UserStatus.PENDING_LIMIT_SETUP) {
+                saveUser(user.copy(status = UserStatus.ACTIVE))
+            }
+        }
+        notifyDataChanged()
     }
 
     fun getLimitConfig(userId: String): DailyLimitConfig? = getAllLimitConfigs()[userId]
@@ -242,6 +272,7 @@ class LocalDataStorage(context: Context) {
             list.add(request)
         }
         saveAllExtensionRequests(list)
+        notifyDataChanged()
     }
 
     fun getAllExtensionRequests(): List<ExtensionRequest> {
@@ -263,7 +294,10 @@ class LocalDataStorage(context: Context) {
                         adminNotes = obj.optString("adminNotes").takeIf { it.isNotEmpty() },
                         requestedAtEpochMs = obj.getLong("requestedAtEpochMs"),
                         respondedAtEpochMs = if (obj.has("respondedAtEpochMs")) obj.getLong("respondedAtEpochMs") else null,
-                        expiresAtEpochMs = if (obj.has("expiresAtEpochMs")) obj.getLong("expiresAtEpochMs") else null
+                        expiresAtEpochMs = if (obj.has("expiresAtEpochMs")) obj.getLong("expiresAtEpochMs") else null,
+                        baselineUsageSecondsAtApproval = if (obj.has("baselineUsageSecondsAtApproval")) obj.getLong("baselineUsageSecondsAtApproval") else 0L,
+                        usageSecondsAtRequest = if (obj.has("usageSecondsAtRequest")) obj.getLong("usageSecondsAtRequest") else 0L,
+                        inviteCode = obj.optString("inviteCode").takeIf { it.isNotEmpty() }
                     )
                 )
             }
@@ -286,9 +320,76 @@ class LocalDataStorage(context: Context) {
             obj.put("requestedAtEpochMs", req.requestedAtEpochMs)
             req.respondedAtEpochMs?.let { obj.put("respondedAtEpochMs", it) }
             req.expiresAtEpochMs?.let { obj.put("expiresAtEpochMs", it) }
+            obj.put("baselineUsageSecondsAtApproval", req.baselineUsageSecondsAtApproval)
+            obj.put("usageSecondsAtRequest", req.usageSecondsAtRequest)
+            req.inviteCode?.let { obj.put("inviteCode", it) }
             arr.put(obj)
         }
         prefs.edit().putString(KEY_EXTENSIONS_JSON, arr.toString()).apply()
+    }
+
+    // --- Account Deletion Requests ---
+    fun saveDeletionRequest(request: AccountDeletionRequest) {
+        val list = getAllDeletionRequests().toMutableList()
+        val index = list.indexOfFirst { it.id == request.id || it.userId == request.userId }
+        if (index >= 0) {
+            list[index] = request
+        } else {
+            list.add(request)
+        }
+        saveAllDeletionRequests(list)
+    }
+
+    fun getAllDeletionRequests(): List<AccountDeletionRequest> {
+        val jsonStr = prefs.getString(KEY_DELETION_REQUESTS_JSON, null) ?: return emptyList()
+        val result = mutableListOf<AccountDeletionRequest>()
+        try {
+            val arr = JSONArray(jsonStr)
+            for (i in 0 until arr.length()) {
+                val obj = arr.getJSONObject(i)
+                result.add(
+                    AccountDeletionRequest(
+                        id = obj.getString("id"),
+                        userId = obj.getString("userId"),
+                        userName = obj.getString("userName"),
+                        userEmail = obj.getString("userEmail"),
+                        reason = obj.getString("reason"),
+                        status = DeletionRequestStatus.valueOf(obj.getString("status")),
+                        requestedAtEpochMs = obj.getLong("requestedAtEpochMs"),
+                        processedAtEpochMs = if (obj.has("processedAtEpochMs")) obj.getLong("processedAtEpochMs") else null,
+                        adminNotes = obj.optString("adminNotes").takeIf { it.isNotEmpty() }
+                    )
+                )
+            }
+        } catch (_: Exception) {}
+        return result
+    }
+
+    fun getDeletionRequestByUserId(userId: String): AccountDeletionRequest? {
+        return getAllDeletionRequests().firstOrNull { it.userId == userId && it.status == DeletionRequestStatus.PENDING }
+    }
+
+    fun deleteDeletionRequest(requestId: String) {
+        val list = getAllDeletionRequests().filterNot { it.id == requestId }
+        saveAllDeletionRequests(list)
+    }
+
+    private fun saveAllDeletionRequests(list: List<AccountDeletionRequest>) {
+        val arr = JSONArray()
+        list.forEach { req ->
+            val obj = JSONObject()
+            obj.put("id", req.id)
+            obj.put("userId", req.userId)
+            obj.put("userName", req.userName)
+            obj.put("userEmail", req.userEmail)
+            obj.put("reason", req.reason)
+            obj.put("status", req.status.name)
+            obj.put("requestedAtEpochMs", req.requestedAtEpochMs)
+            req.processedAtEpochMs?.let { obj.put("processedAtEpochMs", it) }
+            req.adminNotes?.let { obj.put("adminNotes", it) }
+            arr.put(obj)
+        }
+        prefs.edit().putString(KEY_DELETION_REQUESTS_JSON, arr.toString()).apply()
     }
 
     // --- Audit Logs ---
@@ -352,7 +453,25 @@ class LocalDataStorage(context: Context) {
     fun isPuzzleEligible(userId: String): Boolean =
         prefs.getBoolean(KEY_PUZZLE_ELIGIBLE + userId, false)
 
+    // --- Global Data Reactive Notification Flow ---
+    private val _dataUpdatesFlow = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
+    val dataUpdatesFlow: SharedFlow<Unit> get() = _dataUpdatesFlow.asSharedFlow()
+
+    fun notifyDataChanged() {
+        _dataUpdatesFlow.tryEmit(Unit)
+    }
+
     // --- Language & Settings ---
+    private val _themeModeFlow = MutableStateFlow(getAppThemeMode())
+    val themeModeFlow: StateFlow<String> get() = _themeModeFlow
+
+    fun getAppThemeMode(): String = prefs.getString(KEY_APP_THEME, "SYSTEM") ?: "SYSTEM"
+
+    fun setAppThemeMode(mode: String) {
+        prefs.edit().putString(KEY_APP_THEME, mode).apply()
+        _themeModeFlow.value = mode
+    }
+
     fun getAppLanguage(): String = prefs.getString(KEY_APP_LANGUAGE, "en") ?: "en"
 
     fun setAppLanguage(lang: String) {
@@ -370,6 +489,82 @@ class LocalDataStorage(context: Context) {
 
     fun setCloudEndpoint(endpoint: String) {
         prefs.edit().putString(KEY_CLOUD_ENDPOINT, endpoint).apply()
+    }
+
+    // --- Remote Usage Telemetry (Per-User Real Screen Time) ---
+    fun saveUserUsageTelemetry(telemetry: RemoteUsageTelemetry, inviteCode: String? = null, email: String? = null) {
+        val all = getAllUserUsageTelemetry().toMutableMap()
+        val finalInvite = inviteCode ?: telemetry.inviteCode
+        val finalEmail = email ?: telemetry.userEmail
+        val updated = telemetry.copy(inviteCode = finalInvite, userEmail = finalEmail)
+        all[telemetry.userId] = updated
+        if (!finalEmail.isNullOrBlank()) {
+            all[finalEmail.lowercase()] = updated
+        }
+        if (!finalInvite.isNullOrBlank()) {
+            all["inv_" + finalInvite.uppercase()] = updated
+        }
+        saveAllUserUsageTelemetry(all)
+        notifyDataChanged()
+    }
+
+    fun getUserUsageTelemetry(userId: String): RemoteUsageTelemetry? = getAllUserUsageTelemetry()[userId]
+
+    fun getUserUsageTelemetryByEmail(email: String): RemoteUsageTelemetry? =
+        getAllUserUsageTelemetry()[email.lowercase()]
+
+    fun getInviteUsageTelemetry(inviteCode: String): RemoteUsageTelemetry? =
+        getAllUserUsageTelemetry()["inv_" + inviteCode.uppercase()]
+
+    fun clearUserUsageTelemetry(userId: String, email: String? = null, inviteCode: String? = null) {
+        val all = getAllUserUsageTelemetry().toMutableMap()
+        all.remove(userId)
+        if (!email.isNullOrBlank()) all.remove(email.lowercase())
+        if (!inviteCode.isNullOrBlank()) all.remove("inv_" + inviteCode.uppercase())
+        saveAllUserUsageTelemetry(all)
+        notifyDataChanged()
+    }
+
+    fun getAllUserUsageTelemetry(): Map<String, RemoteUsageTelemetry> {
+        val jsonStr = prefs.getString(KEY_USER_USAGE_TELEMETRY_JSON, null) ?: return emptyMap()
+        val result = mutableMapOf<String, RemoteUsageTelemetry>()
+        try {
+            val root = JSONObject(jsonStr)
+            val keys = root.keys()
+            while (keys.hasNext()) {
+                val uid = keys.next()
+                val obj = root.getJSONObject(uid)
+                result[uid] = RemoteUsageTelemetry(
+                    userId = obj.getString("userId"),
+                    userEmail = obj.optString("userEmail").takeIf { it.isNotEmpty() },
+                    inviteCode = obj.optString("inviteCode").takeIf { it.isNotEmpty() },
+                    facebookSeconds = obj.optLong("facebookSeconds", 0L),
+                    instagramSeconds = obj.optLong("instagramSeconds", 0L),
+                    snapchatSeconds = obj.optLong("snapchatSeconds", 0L),
+                    totalUsedSeconds = obj.optLong("totalUsedSeconds", 0L),
+                    timestampEpochMs = obj.optLong("timestampEpochMs", 0L)
+                )
+            }
+        } catch (_: Exception) {}
+        return result
+    }
+
+    private fun saveAllUserUsageTelemetry(map: Map<String, RemoteUsageTelemetry>) {
+        val root = JSONObject()
+        map.forEach { (uid, tel) ->
+            val obj = JSONObject().apply {
+                put("userId", tel.userId)
+                put("userEmail", tel.userEmail ?: "")
+                put("inviteCode", tel.inviteCode ?: "")
+                put("facebookSeconds", tel.facebookSeconds)
+                put("instagramSeconds", tel.instagramSeconds)
+                put("snapchatSeconds", tel.snapchatSeconds)
+                put("totalUsedSeconds", tel.totalUsedSeconds)
+                put("timestampEpochMs", tel.timestampEpochMs)
+            }
+            root.put(uid, obj)
+        }
+        prefs.edit().putString(KEY_USER_USAGE_TELEMETRY_JSON, root.toString()).apply()
     }
 
     // --- Account Deletion ---
@@ -391,6 +586,22 @@ class LocalDataStorage(context: Context) {
         if (getCurrentUserId() == userId) {
             setCurrentUserId(null)
         }
+        notifyDataChanged()
+    }
+
+    // --- Procedural Puzzle Seen History Persistence ---
+    fun getSeenPuzzlePrompts(level: Int): Set<String> {
+        return prefs.getStringSet("seen_puzzles_level_$level", emptySet()) ?: emptySet()
+    }
+
+    fun saveSeenPuzzlePrompt(level: Int, prompt: String) {
+        val current = getSeenPuzzlePrompts(level).toMutableSet()
+        current.add(prompt)
+        prefs.edit().putStringSet("seen_puzzles_level_$level", current).apply()
+    }
+
+    fun clearSeenPuzzlePrompts(level: Int) {
+        prefs.edit().remove("seen_puzzles_level_$level").apply()
     }
 
     // --- Cosmos Seed ---

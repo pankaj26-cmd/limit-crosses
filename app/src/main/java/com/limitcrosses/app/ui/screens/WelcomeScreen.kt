@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -90,7 +91,46 @@ fun WelcomeScreen(
                 lineHeight = 20.sp
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Mindful Locked State Card (Requirement 4: "Time Exceeded - Focus on yourself now")
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = CosmicCard,
+                border = androidx.compose.foundation.BorderStroke(1.dp, CosmicSecondary.copy(alpha = 0.5f))
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = CosmicSecondary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Time Exceeded - Focus On Yourself Now",
+                            fontWeight = FontWeight.Bold,
+                            color = CosmicTextPrimary,
+                            fontSize = 14.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "You are currently signed out. Social apps remain locked. Take this time to step away from screens and focus on your goals.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CosmicTextSecondary,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 18.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Primary Action: Join via Invite
             Button(
@@ -101,11 +141,11 @@ fun WelcomeScreen(
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = CosmicPrimary)
             ) {
-                Icon(Icons.Default.PersonAdd, contentDescription = null, tint = CosmicTextPrimary)
+                Icon(Icons.Default.PersonAdd, contentDescription = null, tint = Color.White)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.welcome_btn_join_invite),
-                    color = CosmicTextPrimary,
+                    color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp
                 )

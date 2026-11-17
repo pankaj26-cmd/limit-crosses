@@ -44,7 +44,7 @@
     <string name="auth_name_label">Full Name</string>
     <string name="auth_name_hint">Your name</string>
     <string name="auth_invite_code_label">Invitation Code</string>
-    <string name="auth_invite_code_hint">e.g. LC-INVITE-8492</string>
+    <string name="auth_invite_code_hint">e.g. LC-7M4P-8K9N-2Q5W</string>
     <string name="auth_bootstrap_key_label">Master Bootstrap Secret</string>
     <string name="auth_bootstrap_key_hint">Enter initial deployment secret</string>
     <string name="auth_optional_handles_title">Optional Social Handles (Display only)</string>
@@ -79,6 +79,7 @@
     <string name="perm_vpn_btn">Configure Local VPN</string>
     <string name="perm_granted">Granted</string>
     <string name="perm_missing">Required / Missing</string>
+    <string name="perm_optional_inactive">Optional / Not Active</string>
     <string name="perm_btn_continue_to_limit">Continue to Limit Setup</string>
 
     <!-- Limit Setup & Locking -->
@@ -198,6 +199,10 @@
     <string name="settings_section_profile">User Profile</string>
     <string name="settings_section_backend">Backend &amp; Connectivity</string>
     <string name="settings_section_language">Language / भाषा</string>
+    <string name="settings_section_theme">Theme &amp; Cosmos Appearance</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_dark">Dark Cosmos</string>
+    <string name="settings_theme_light">Solar Dawn (Light)</string>
     <string name="settings_section_privacy">Privacy &amp; Data Rights</string>
     <string name="settings_lang_en">English</string>
     <string name="settings_lang_hi">हिंदी (Hindi)</string>
@@ -233,5 +238,8 @@
     <!-- Sign Out Dialog -->
     <string name="dialog_sign_out_title">Sign Out</string>
     <string name="dialog_sign_out_message">Are you sure you want to sign out of Limit Crosses?</string>
+
+    <!-- Accessibility Service -->
+    <string name="accessibility_service_description">Limit Crosses uses Accessibility to detect when Facebook, Instagram, or Snapchat is opened after your daily usage limit has expired, immediately redirecting you to mindful cognitive puzzle challenges.</string>
 </resources>
 

@@ -23,17 +23,29 @@ Limit Crosses explicitly adheres to engineering honesty:
 
 ---
 
-## 3. Best-Effort Enforcement Mechanism
+## 3. Best-Effort Multi-Layer Enforcement Mechanism
 
-When the daily combined limit reaches zero:
-1. **Immediate Overlay & Foreground Prompt**:
-   - `LimitReachedScreen` takes focus.
-   - Shows remaining time = 0 and countdown to local midnight.
-2. **Cognitive Gate**:
-   - Instead of automatic frustration, users are prompted to solve 5 consecutive deterministic reasoning puzzles if they wish to request additional time from their Administrator.
-   - Educational divergence is offered via **Learn Cosmos**, redirecting dopamine-seeking impulses toward astronomical science.
-3. **Accountability Model**:
-   - Limit Crosses acts as a mirror and commitment contract. Bypassing it by deleting the app or revoking permissions is recorded in the immutable audit log visible to the Administrator.
+Standard Android (consumer mode) blocks apps from killing other apps. To achieve resilient blocking across modern Android versions (Android 10 through Android 16), Limit Crosses implements a 4-layer enforcement stack:
+
+1. **Layer 1: Accessibility Service (`LimitCrossesAccessibilityService`)**:
+   - Listens to `AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED` with 0ms latency.
+   - When the user launches `com.instagram.android`, `com.snapchat.android`, or `com.facebook.katana` while remaining allowance is 0:
+     - Instantly executes `performGlobalAction(GLOBAL_ACTION_HOME)`, kicking the user out of the app.
+     - Triggers the impassable system overlay.
+     - Launches `MainActivity` directly into `LimitReachedScreen` (exempt from Background Activity Launch restrictions).
+
+2. **Layer 2: Impassable System Overlay (`AppBlockerOverlayManager`)**:
+   - Uses `WindowManager.addView()` with `TYPE_APPLICATION_OVERLAY`.
+   - Draws a full-screen cosmic card directly over Instagram/Snapchat that intercepts 100% of touches.
+   - Social media content underneath is completely inaccessible.
+
+3. **Layer 3: Background Foreground Guard (`AppMonitorBlockerService`)**:
+   - Continuous foreground service monitoring package usage.
+   - Automatically drops out to home and raises high-priority heads-up alerts if a monitored app enters focus.
+
+4. **Layer 4: Enterprise Device Owner Hardware Lock**:
+   - Programmatically invokes `dpm.setPackagesSuspended(admin, arrayOf(pkg), true)`.
+   - The OS kernel disables and greys out the icons on the launcher. Tapping them yields an OS-level prompt: *"App disabled by your administrator"*.
 
 ---
 

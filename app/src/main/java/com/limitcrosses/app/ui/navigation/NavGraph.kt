@@ -117,8 +117,14 @@ fun LimitCrossesNavGraph(
         composable(Screen.PermissionsChecklist.route) {
             PermissionsChecklistScreen(
                 viewModel = permissionsViewModel,
+                authViewModel = authViewModel,
                 onContinue = {
                     navController.navigate(Screen.LimitSetup.route)
+                },
+                onLoggedOut = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
@@ -126,9 +132,15 @@ fun LimitCrossesNavGraph(
         composable(Screen.LimitSetup.route) {
             LimitSetupScreen(
                 viewModel = limitSetupViewModel,
+                authViewModel = authViewModel,
                 onConfirmed = {
                     navController.navigate(Screen.Dashboard.route) {
-                        popUpTo(Screen.LimitSetup.route) { inclusive = true }
+                        popUpTo(Screen.Welcome.route) { inclusive = true }
+                    }
+                },
+                onLoggedOut = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
@@ -162,18 +174,38 @@ fun LimitCrossesNavGraph(
 
         composable(Screen.LimitReached.route) {
             LimitReachedScreen(
+                dashboardViewModel = dashboardViewModel,
+                authViewModel = authViewModel,
                 onNavigateToPuzzles = { navController.navigate(Screen.PuzzleLevels.route) },
-                onNavigateToCosmos = { navController.navigate(Screen.LearnCosmos.route) }
+                onNavigateToCosmos = { navController.navigate(Screen.LearnCosmos.route) },
+                onNavigateToUsage = { navController.navigate(Screen.UsageDetails.route) },
+                onBackToDashboard = {
+                    navController.navigate(Screen.Dashboard.route) {
+                        popUpTo(Screen.Dashboard.route) { inclusive = true }
+                    }
+                },
+                onLoggedOut = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
         composable(Screen.PuzzleLevels.route) {
             PuzzleLevelsScreen(
                 viewModel = puzzleViewModel,
+                authViewModel = authViewModel,
                 onBack = { navController.popBackStack() },
                 onProceedToRequest = {
+                    extensionViewModel.loadData()
                     navController.navigate(Screen.ExtensionRequests.route) {
                         popUpTo(Screen.PuzzleLevels.route) { inclusive = true }
+                    }
+                },
+                onLoggedOut = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
@@ -182,8 +214,14 @@ fun LimitCrossesNavGraph(
         composable(Screen.ExtensionRequests.route) {
             ExtensionRequestsScreen(
                 viewModel = extensionViewModel,
+                authViewModel = authViewModel,
                 onBack = { navController.popBackStack() },
-                onNavigateToPuzzles = { navController.navigate(Screen.PuzzleLevels.route) }
+                onNavigateToPuzzles = { navController.navigate(Screen.PuzzleLevels.route) },
+                onLoggedOut = {
+                    navController.navigate(Screen.Welcome.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 

@@ -1,165 +1,171 @@
 # Limit Crosses
 
-> **Mindful Digital Boundaries — Transparent, Unified Social Usage Control**
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-purple.svg?style=for-the-badge&logo=kotlin)](https://kotlinlang.org)
+[![Jetpack Compose](https://img.shields.io/badge/UI-Jetpack%20Compose%20%26%20Material%203-4285F4?style=for-the-badge&logo=android)](https://developer.android.com/jetpack/compose)
+[![Min SDK](https://img.shields.io/badge/Min%20SDK-26%20(Android%208.0)-brightgreen.svg?style=for-the-badge)](https://developer.android.com)
+[![Target SDK](https://img.shields.io/badge/Target%20SDK-35%20%2F%2037-blue.svg?style=for-the-badge)](https://developer.android.com)
+[![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20MVI%2FMVVM-orange.svg?style=for-the-badge)](https://developer.android.com)
+[![Play Protect](https://img.shields.io/badge/Google%20Play%20Protect-Clean%20Compliant-success.svg?style=for-the-badge&logo=googleplay)](https://developer.android.com)
+[![Author](https://img.shields.io/badge/Creator-Pankaj%20Yadav-blueviolet.svg?style=for-the-badge)](https://github.com/pankaj26-cmd)
 
-Limit Crosses is a modern native Android application built from scratch to help individuals and accountability partners establish firm, respectful boundaries around social media usage.
-
----
-
-## 🌟 Key Architecture & Features
-
-- **Unified Combined Daily Allowance**:
-  - Enforces a single combined daily limit (0–45 minutes total) across **Facebook**, **Instagram**, and **Snapchat** (NOT 45 minutes each).
-- **Daily Limit Locking**:
-  - Once confirmed by the user, the daily limit is locked to encourage genuine commitment. Modifications require Administrator approval and generate an immutable audit log entry.
-- **5-Level Deterministic Cognitive Verification**:
-  - To request additional time, users must solve 5 consecutive deterministic logic/pattern puzzles. Any failure immediately resets the progress back to Level 1.
-  - Accessibility alternatives with textual reasoning hints are supported.
-- **Admin & Invite Hierarchy**:
-  - **Admin Creation**: Public users cannot self-register as Admin. Admin creation is strictly guarded by the deployment Master Bootstrap Key (`LIMIT-CROSS-ADMIN-BOOTSTRAP-2026`).
-  - **User Onboarding**: Users join solely via cryptographically generated Admin invitation codes or deep links (`limitcrosses://invite?code=...`).
-- **Data Dignity & Transparent Privacy**:
-  - Measures only foreground runtime of the 3 specified packages via `UsageStatsManager`.
-  - **Zero collection** of passwords, chats, camera, contacts, or browsing history.
-- **Learn Cosmos**:
-  - Independent educational portal featuring verified astronomy from **NASA** and **ESA** (Universe, Galaxies, Stars, Black Holes, Planets, Missions).
-- **Dual Mode (Demo / Local & Cloud Sync)**:
-  - 100% functional offline out-of-the-box with `LocalMockBackendEngine`.
-  - Connects to external cloud REST APIs with zero bundled secrets.
-- **Bilingual Localization**:
-  - Complete native support for **English** and **Hindi (हिंदी)** across all UI strings.
-- **Configurable App Name**:
-  - Managed from a single location (`res/values/strings.xml` and `BuildConfig.APP_NAME`).
+> **Mindful Digital Boundaries — Transparent, Unified Social Usage Enforcer for Android**  
+> *Crafted with mindful focus by **Pankaj Yadav**.*
 
 ---
 
-## 🛠️ Technology Stack
+## 🌟 Overview & Product Vision
 
-- **Language**: Kotlin 2.0.21
-- **UI Framework**: Jetpack Compose & Material 3
-- **Navigation**: Jetpack Navigation Compose
-- **Architecture**: Clean Architecture + MVVM + Repository Pattern
-- **Dependency Injection**: Koin 3.5.6 (Kotlin-native, zero-annotation overhead)
-- **Asynchronous Execution**: Kotlin Coroutines & StateFlow
-- **Platform APIs**:
-  - `android.app.usage.UsageStatsManager` (Foreground app time)
-  - `android.net.VpnService` (Local DNS resolution filtering)
-  - `androidx.browser.customtabs` (NASA & ESA secure external viewer)
-  - `android.app.admin.DeviceAdminReceiver` (Optional enterprise mode)
+Most digital wellbeing and screen-time limiters suffer from two fatal weaknesses:
+1. **Siloed App Limits:** They restrict apps individually (e.g., 45 minutes on Instagram, 45 minutes on Facebook, 45 minutes on Snapchat = over 2 hours of doomscrolling).
+2. **Frictionless Snoozing:** Users can effortlessly tap *"Ignore for 15 minutes"* with zero cognitive resistance.
+
+**Limit Crosses** changes the equation through a strict, respectful architectural model:
+- **Combined Daily Cap (0–45 mins Total):** Facebook, Instagram, and Snapchat draw from a **single shared pool**. 25 minutes on Instagram leaves only 20 minutes for both Facebook and Snapchat combined.
+- **Immediate Foreground Interception:** When the allowance hits zero, a high-priority system overlay and blocker immediately intercepts social apps, replacing dopamine loops with mindful reflection.
+- **Cognitive Verification Puzzles (1,000+ Questions):** To request extra allowance from an Administrator, users cannot simply tap a button. They must solve a 5-level cognitive test drawn randomly from a vast bank of 1,000+ STEM, physics, astronomy, and logic challenges.
+- **Learn Cosmos Mindfulness Hub:** Features verified space exploration and astrophysics topics backed by authentic **NASA** and **ESA** research, redirecting idle screen impulses toward meaningful learning.
 
 ---
 
-## 🚀 Build Instructions
+## 🚀 Architectural Highlights
+
+```mermaid
+flowchart TD
+    subgraph SystemLayer["Android System Services"]
+        USM["UsageStatsManager (UsageEvents Stream)"]
+        AMS["AppMonitorBlockerService (Foreground Service)"]
+        WIN["WindowManager (System Alert Window Overlay)"]
+        ALM["AlarmManager (Local Midnight Reset)"]
+    end
+
+    subgraph CoreEngine["Limit Crosses Core Engine"]
+        USH["UsageStatsHelper (Lifecycle State Machine)"]
+        LCR["Limit Calculation & Physical Ceiling Clamp"]
+        SEC["SecurityManager & Bootstrap Verification"]
+        PUZ["1,000+ Question Deterministic Puzzle Engine"]
+    end
+
+    subgraph DataLayer["Storage & Communication"]
+        PREF["Encrypted LocalDataStorage"]
+        RELAY["CloudSyncRelayHelper (Remote Topic Sync)"]
+        MOCK["LocalMockBackendEngine (Zero-Config Offline)"]
+    end
+
+    subgraph Presentation["Jetpack Compose UI (Cosmic System)"]
+        DASH["User Mindful Dashboard"]
+        ADMIN["Administrator Governance Console"]
+        BLOCK["Limit Enforced Interceptor Overlay"]
+        QUIZ["5-Tier Cognitive Challenge"]
+        COSMOS["Learn Cosmos Explorer"]
+    end
+
+    USM --> USH
+    USH --> LCR
+    LCR --> AMS
+    AMS --> WIN
+    ALM --> LCR
+    CoreEngine --> DataLayer
+    DataLayer --> Presentation
+```
+
+### 1. High-Precision AOSP Telemetry State Machine
+Traditional apps poll `queryUsageStats(INTERVAL_DAILY)` which creates overlapping bucket errors and phantom minutes. **Limit Crosses** implements an event-driven lifecycle parser using low-level `UsageEvents`:
+* **Strict Pairing:** Explicitly pairs `ACTIVITY_RESUMED` with subsequent `ACTIVITY_PAUSED` events.
+* **Ghost Event Elimination:** Ignores orphaned `ACTIVITY_STOPPED` system memory trims and eliminates midnight timestamp fallbacks that typically corrupt screen-time calculations.
+* **Physical Time Ceiling Clamp:** Mathematically enforces that accumulated daily usage cannot exceed physical seconds elapsed since midnight:
+  $$\text{usageSeconds} \le \text{System.currentTimeMillis()} - \text{todayMidnightEpochMs}$$
+
+### 2. Zero-Accessibility Architecture (Play Protect Compliant)
+Many monitoring utilities request Android's `BIND_ACCESSIBILITY_SERVICE` permission, triggering severe Google Play Protect security warnings and battery drain. Limit Crosses uses strictly sanctioned system capabilities:
+- `android.permission.PACKAGE_USAGE_STATS` (Screen time measurement)
+- `android.permission.SYSTEM_ALERT_WINDOW` (Limit overlay display)
+- `android.permission.FOREGROUND_SERVICE_SPECIAL_USE` (Persistent monitoring)
+
+### 3. Multi-Tenant Remote Administration & Governance
+* **Master Bootstrap Secret:** Initial Administrator provisioning is strictly gated by a secure deployment master key (`LIMIT-CROSS-ADMIN-BOOTSTRAP-2026`).
+* **Cryptographic Invites:** Users join exclusively through cryptographic invite codes (`LC-XXXX-XXXX`) generated by the Admin.
+* **Remote Policy Locking:** Admins can lock the daily cap, view real-time breakdown telemetries of all users, approve/deny extension requests, and process GDPR-style account deletion requests.
+* **Full Audit Trail:** All administrative and lifecycle actions are recorded with timestamps, actor roles, and audit reasons.
+
+### 4. Dual Sync Engine (Cloud Relay + Offline Mode)
+* **Cloud Sync Relay:** End-to-end telemetry and request synchronization across remote devices using secure topic relays without third-party account linkage.
+* **Offline Base64 Sync Payload:** Air-gapped fallback allowing users to export encrypted registration sync codes (`LCR-...`) directly to their Admin.
+
+---
+
+## 🎨 Design System: Cosmic & Solar Dawn
+
+Limit Crosses features a purpose-built design system crafted entirely in Jetpack Compose:
+* **Deep Cosmic Theme (Default):** Deep space nebula palette (`#070A14` void, `#16223E` glassmorphism card surfaces, `#8B5CF6` primary violet, `#00E5FF` cyan accent).
+* **Solar Dawn Light Theme:** High-contrast crisp daylight mode (`#F1F5F9` canvas, `#FFFFFF` cards, `#6D28D9` deep violet, `#B45309` amber gold contrast).
+* **Bilingual Localization:** Full first-class string localization in **English** and **Hindi (हिंदी)** with instantaneous in-app switching.
+
+---
+
+## 💻 Tech Stack & Dependencies
+
+| Layer | Technologies |
+|---|---|
+| **Language** | Kotlin 2.0.21 |
+| **UI Framework** | Jetpack Compose, Material 3, Compose Navigation |
+| **Asynchronous Engine** | Kotlin Coroutines, StateFlow, SharedFlow |
+| **Dependency Injection** | Koin 3.5.6 (Kotlin-native DI) |
+| **System APIs** | UsageStatsManager, WindowManager, Foreground Services, AlarmManager |
+| **Educational Web** | AndroidX Custom Tabs (NASA & ESA verified viewers) |
+| **Testing** | JUnit 4, Kotlinx Coroutines Test, Automated Unit Suites |
+
+---
+
+## 🛠️ Build & Installation
 
 ### Prerequisites
-1. **JDK 21 LTS** (e.g. Eclipse Temurin 21)
-2. **Android SDK** (API 26 to 35 / 37)
-3. Windows PowerShell or Unix Shell
+* **JDK 21 LTS** (Eclipse Adoptium Temurin 21 recommended)
+* **Android SDK** (API 26 through 35/37)
+* Windows PowerShell or Linux/macOS Bash
 
-### Environment Configuration
-Set your `JAVA_HOME` and Android SDK path:
-```powershell
+### 1. Clone & Build
+```bash
+# Clone the repository
+git clone https://github.com/pankaj26-cmd/limit-crosses.git
+cd limit-crosses
+
+# Set JAVA_HOME (Windows example)
 $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.13.9-hotspot"
-```
-
-### Clean Build & Unit Tests
-```powershell
-# Perform a clean build
-.\gradlew.bat clean
-
-# Compile debug APK
-.\gradlew.bat assembleDebug
 
 # Run unit tests
-.\gradlew.bat test
+.\gradlew.bat testDebugUnitTest
+
+# Assemble Debug APK
+.\gradlew.bat assembleDebug
 ```
 
-The compiled APK will be located at:
-`app/build/outputs/apk/debug/app-debug.apk`
+The output APK will be generated at:
+```
+app/build/outputs/apk/debug/app-debug.apk
+```
 
----
-
-## 📱 Emulator Testing Instructions
-
-### Recommended Emulator Target
-- **Device**: Medium Phone / Pixel 8
-- **API Level**: Android 14 (API 34) or Android 15/16 (API 35/37)
-- **Architecture**: x86_64
-
-### Launching the Emulator & Installing
-```powershell
-# 1. Start Emulator
-& "C:\Users\<user>\AppData\Local\Android\Sdk\emulator\emulator.exe" -avd Medium_Phone_API_37.0
-
-# 2. Wait for device boot
-& "C:\Users\<user>\AppData\Local\Android\Sdk\platform-tools\adb.exe" wait-for-device
-
-# 3. Install APK
-& "C:\Users\<user>\AppData\Local\Android\Sdk\platform-tools\adb.exe" install -r "app\build\outputs\apk\debug\app-debug.apk"
-
-# 4. Launch Limit Crosses
-& "C:\Users\<user>\AppData\Local\Android\Sdk\platform-tools\adb.exe" shell am start -n com.limitcrosses.app/.MainActivity
+### 2. Quick Deploy via ADB
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb shell am start -n com.limitcrosses.app/.MainActivity
 ```
 
 ---
 
-## 📱 Emulator Testing & Empirical Validation Results
+## 🧪 Automated Unit Test Suites
 
-Tested and verified on live Android Emulator (**Android 16 Baklava Preview / API 37**, `sdk_gphone64_x86_64`):
-
-| Test Scenario | Action Performed | Result | Status |
-|---|---|---|---|
-| **Clean Gradle Build** | `.\gradlew.bat clean` & `assembleDebug` | Output `app-debug.apk` (19.4 MB) | **PASSED** |
-| **Unit Test Suite** | `.\gradlew.bat test` (49 Gradle tasks) | 12/12 test cases passed (`testDebugUnitTest`, `testReleaseUnitTest`) | **PASSED** |
-| **Admin Bootstrap** | Input master key `LIMIT-CROSS-ADMIN-BOOTSTRAP-2026` | Admin account activated; navigated to Administrator Console | **PASSED** |
-| **Invite Generation** | Generated invite `LC-APA8-U4P8` with 30m default cap | Cryptographic invite code created and persisted | **PASSED** |
-| **User Onboarding** | Used code `LC-APA8-U4P8` to register `Alice User` | Invite verified, account created, linked optional handles | **PASSED** |
-| **Permission Checklist** | Real-time `UsageAccess` & `Notifications` status | Live detection updated from `Missing` to `Granted` upon granting | **PASSED** |
-| **Limit Locking** | Confirmed 30 min daily allowance | Allowance locked; user cannot change without Admin approval | **PASSED** |
-| **Main Dashboard** | Rendered allowance countdown, meters, best-effort badge | Accurately displayed 30 min remaining and FB/IG/Snap targets | **PASSED** |
-| **Cognitive Verification** | Solved 5-level deterministic logic sequence puzzle | Radio selections, deterministic evaluations, reset-on-failure | **PASSED** |
-| **Learn Cosmos** | Filtered categories (Universe, Galaxies, Stars) | Custom Tabs launched NASA/ESA verified research URLs | **PASSED** |
-| **Orientation Adaptation** | Rotated device to Landscape (`user_rotation 1`) | UI adapted smoothly across orientation change with zero crashes | **PASSED** |
-| **Process Recreation** | Forced app termination (`am force-stop`) & relaunch | App restored user session, locked limit, and usage records | **PASSED** |
-| **Localization Switch** | Toggled language to Hindi (हिंदी) in Settings | Dynamic UI localization applied cleanly without process restart | **PASSED** |
-
-### Verified Screen Artifacts
-The following screen captures were pulled directly from the running emulator:
-- `welcome_screen.png`: Welcome landing screen with role-aware onboarding
-- `admin_dashboard.png`: Administrator console with invite generation and tabs
-- `permissions_screen.png`: Real-time permission health checklist
-- `limit_setup_screen.png`: Daily limit setup slider with 0–45m enforcement
-- `dashboard_screen.png`: Main mindful usage dashboard with per-app tracking
-- `puzzle_screen.png`: 5-level deterministic cognitive challenge
-- `cosmos_screen.png`: Learn Cosmos educational explorer
-- `landscape_screen.png`: Responsive UI adaptation under landscape rotation
-- `settings_screen.png`: Profile, privacy, and sign-out settings
-- `hindi_screen.png`: Bilingual Hindi localization (हिंदी)
+The codebase includes automated unit test suites covering core business logic:
+* `LimitCalculationTest.kt`: Tests boundary constraints, 0–45m caps, physical ceiling clamping, and lifecycle event pairing.
+* `PuzzleLogicTest.kt`: Validates deterministic evaluation, failure penalties, and 1,000+ randomized question bank integrity.
+* `SecurityManagerTest.kt`: Verifies cryptographic password hashing, invite code generator entropy, and admin master key verification.
+* `CloudSyncRelayTest.kt`: Tests JSON serialization, telemetry payloads, and offline sync encoding/decoding.
 
 ---
 
-## 🔐 Admin Bootstrap Process
+## 👤 Author & Attribution
 
-1. Launch **Limit Crosses**.
-2. On the **Welcome Screen**, tap **"Initial Admin Bootstrap"**.
-3. Fill in your Administrator details:
-   - Full Name: `System Administrator`
-   - Email: `admin@limitcrosses.org`
-   - Password: `<secure-password>`
-   - Master Bootstrap Secret: `LIMIT-CROSS-ADMIN-BOOTSTRAP-2026`
-4. Tap **"Activate Admin Profile"**.
-5. Once inside the **Administrator Console**, you can:
-   - Generate user invitation codes (assigning default limits and expiry).
-   - Review and adjust user limits with required audit reasons.
-   - Approve, deny, or modify pending extra-time extension requests.
-   - Inspect the immutable system audit log.
+**Pankaj Yadav**  
+* GitHub: [@pankaj26-cmd](https://github.com/pankaj26-cmd)  
+* Project: **Limit Crosses**  
 
----
-
-## 📄 Documentation Index
-
-- [Support Matrix & OS Compatibility](SUPPORT_MATRIX.md)
-- [Privacy, Data Flow & Retention](PRIVACY_AND_DATA_FLOW.md)
-- [Backend Pricing & Quotas](COST_AND_BACKEND.md)
-- [Threat Model & Limitations](THREAT_MODEL_AND_LIMITATIONS.md)
-
+*Designed and crafted with mindful focus by Pankaj Yadav.*
